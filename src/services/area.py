@@ -1,6 +1,6 @@
 from flask import Blueprint,request,jsonify
 from src.database import Area,db
-from sqlalchemy import select
+from datetime import datetime
 from src.constants.http_constants import HTTP_201_CREATED,HTTP_200_OK,HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND,HTTP_409_CONFLICT
 
 
@@ -17,10 +17,20 @@ def handle_areas():
             'error': "Nama Area tidak boleh kosong "
          }),HTTP_400_BAD_REQUEST
 
-      if Area.query.filter_by(name=nama).first():
-         return jsonify({
-            'error': "Area sudah terdaftar "
-         }),HTTP_409_CONFLICT
+      isExist = Area.query.filter_by(name=nama).first()\
+
+      if isExist:
+         if isExist.delete_at:
+            isExist.delete_at = None
+            db.session.commit()
+            return jsonify({
+               'id':isExist.id,
+               'nama':isExist.name
+            }),HTTP_201_CREATED
+         else:
+            return jsonify({
+               'error': "Area sudah terdaftar "
+            }),HTTP_409_CONFLICT
 
       new_area = Area(nama=nama)
       db.session.add(new_area)
@@ -32,7 +42,7 @@ def handle_areas():
       }),HTTP_201_CREATED
    else:
       area_id = request.args.get('id',type=int)
-      areas = Area.query.order_by(Area.name).all()
+      areas = Area.query.filter_by(delete_at=None).order_by(Area.name).all()
 
       if area_id :
          areas = Area.query.filter_by(id=area_id).first()
@@ -76,6 +86,8 @@ def handle_delete(area_id):
    if not delete_area:
       return jsonify({'error': 'Area tidak ditemukan'}),HTTP_404_NOT_FOUND
 
+   delete_area.delete_at = datetime.now()
+   db.session.commit()
    # db.session.delete(delete_area)
    # db.session.commit()
 
