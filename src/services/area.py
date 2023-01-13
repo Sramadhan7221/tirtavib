@@ -76,8 +76,8 @@ def handle_delete(area_id):
    if not delete_area:
       return jsonify({'error': 'Area tidak ditemukan'}),HTTP_404_NOT_FOUND
 
-   db.session.delete(delete_area)
-   db.session.commit()
+   # db.session.delete(delete_area)
+   # db.session.commit()
 
    return jsonify({
       'message':'Area berhasil dihapus'
