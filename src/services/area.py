@@ -3,8 +3,6 @@ from src.database import Area,db
 from datetime import datetime
 from src.constants.http_constants import HTTP_201_CREATED,HTTP_200_OK,HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND,HTTP_409_CONFLICT
 
-
-
 area = Blueprint("area",__name__, url_prefix="/areas")
 
 @area.route("/", methods=['POST','GET'])
@@ -17,7 +15,7 @@ def handle_areas():
             'error': "Nama Area tidak boleh kosong "
          }),HTTP_400_BAD_REQUEST
 
-      isExist = Area.query.filter_by(name=nama).first()\
+      isExist = Area.query.filter_by(name=nama).first()
 
       if isExist:
          if isExist.delete_at:
