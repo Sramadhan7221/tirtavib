@@ -32,7 +32,7 @@ def handle_areas():
                'error': "Area sudah terdaftar "
             }),HTTP_409_CONFLICT
 
-      new_area = Area(nama=nama)
+      new_area = Area(name=nama)
       db.session.add(new_area)
       db.session.commit()
 
