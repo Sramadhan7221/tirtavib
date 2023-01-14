@@ -1,7 +1,8 @@
-from flask import Flask,Blueprint,jsonify
+from flask import Flask,jsonify
 import os
 from src.database import db
 from src.services.area import area
+from src.services.assets import assets
 from src.constants.http_constants import HTTP_200_OK,HTTP_404_NOT_FOUND, HTTP_500_INTERNAL_SERVER_ERROR
 
 def create_app(test_conifg=None):
@@ -19,6 +20,7 @@ def create_app(test_conifg=None):
    db.init_app(app)
 
    app.register_blueprint(area)
+   app.register_blueprint(assets)
 
    @app.route('/')
    def index():

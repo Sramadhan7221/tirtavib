@@ -68,7 +68,7 @@ def handle_assets():
             'error': "area_id tidak terdaftar "
          }),HTTP_404_NOT_FOUND
 
-      assets = Area.query.filter_by(delete_at=None,area_id=area_id).order_by(Asset.name).all()
+      assets = Asset.query.filter_by(delete_at=None,area_id=area_id).order_by(Asset.name).all()
       for item in assets:
          data.append({
             'id': item.id,
