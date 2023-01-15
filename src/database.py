@@ -35,6 +35,7 @@ class Asset(db.Model):
 
 class MeasurePoint(db.Model):
    id = db.Column(db.Integer, primary_key=True)
+   id_api = db.Column(db.String(30), nullable=False, unique=True)
    name = db.Column(db.String(150), nullable=False)
    accel = db.Column(db.Float, nullable=False)
    velocity = db.Column(db.Float, nullable=False)
