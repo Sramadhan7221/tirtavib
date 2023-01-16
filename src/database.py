@@ -4,6 +4,19 @@ from uuid import uuid4
 
 db = SQLAlchemy()
 
+class Users(db.Model):
+   id = db.Column(db.Integer, primary_key=True)
+   email = db.Column(db.String(250), nullable=False)
+   password = db.Column(db.String(128), nullable=False)
+   nama = db.Column(db.String(250), nullable=False)
+   no_telp = db.Column(db.String(14), nullable=True)
+   
+   def __init__(self,**kwargs):
+      super().__init__(**kwargs)
+
+   def __ref__(self) -> str:
+      return 'Area>>> {self.name}'
+
 class Area(db.Model):
    id = db.Column(db.Integer, primary_key=True)
    name = db.Column(db.String(100), nullable=False)
