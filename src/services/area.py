@@ -1,11 +1,13 @@
 from flask import Blueprint,request,jsonify
 from src.database import Area,db
 from datetime import datetime
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from src.constants.http_constants import HTTP_201_CREATED,HTTP_200_OK,HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND,HTTP_409_CONFLICT
 
 area = Blueprint("area",__name__, url_prefix="/areas")
 
 @area.route("/", methods=['POST','GET'])
+@jwt_required(locations='headers')
 def handle_areas():
    if request.method == 'POST':
       nama = request.get_json().get('nama','')
@@ -56,6 +58,7 @@ def handle_areas():
       return jsonify({'data':data}),HTTP_200_OK
 
 @area.patch("/edit/<int:area_id>")
+@jwt_required(locations='headers')
 def edit_handler(area_id):
    edit_area = Area.query.filter_by(id=area_id).first()
 
@@ -78,6 +81,7 @@ def edit_handler(area_id):
    }),HTTP_200_OK
 
 @area.delete('/delete/<int:area_id>')
+@jwt_required(locations='headers')
 def handle_delete(area_id):
    delete_area = Area.query.filter_by(id=area_id).first()
 

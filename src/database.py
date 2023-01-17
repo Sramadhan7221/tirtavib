@@ -15,7 +15,7 @@ class Users(db.Model):
       super().__init__(**kwargs)
 
    def __ref__(self) -> str:
-      return 'Area>>> {self.name}'
+      return 'User>>> {self.name}'
 
 class Area(db.Model):
    id = db.Column(db.Integer, primary_key=True)
