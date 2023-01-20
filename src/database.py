@@ -10,6 +10,7 @@ class Users(db.Model):
    password = db.Column(db.String(128), nullable=False)
    nama = db.Column(db.String(250), nullable=False)
    no_telp = db.Column(db.String(14), nullable=True)
+   role = db.Column(db.String, nullable=False)
    
    def __init__(self,**kwargs):
       super().__init__(**kwargs)
