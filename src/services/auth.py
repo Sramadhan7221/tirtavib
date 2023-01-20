@@ -9,8 +9,12 @@ from flask_jwt_extended import jwt_required, create_access_token,create_refresh_
 auth = Blueprint("auth",__name__, url_prefix="/auth")
 
 @auth.post('/register')
+@jwt_required('header')
 # @swag_from('./docs/auth/register.yaml')
 def register():
+   user_id = get_jwt_identity()
+   user = Users.query.filter_by(id=user_id).first()
+
    nama = request.json['nama']
    email = request.json['email']
    password = request.json['password']
@@ -72,7 +76,7 @@ def login():
    return jsonify({'error': "Wrong credentials"}), HTTP_401_UNAUTHORIZED
 
 @auth.get("/me")
-@jwt_required()
+@jwt_required('header')
 def me():
    user_id = get_jwt_identity()
 
@@ -84,7 +88,7 @@ def me():
    }), HTTP_200_OK
 
 @auth.post("/token/refresh")
-@jwt_required(refresh=True)
+@jwt_required('header',refresh=True)
 def refresh_user_token():
    identity = get_jwt_identity()
    access = create_access_token(identity=identity)

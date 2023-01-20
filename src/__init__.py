@@ -5,6 +5,7 @@ from src.services.area import area
 from src.services.assets import assets
 from src.services.auth import auth
 from src.services.measure_point import measure_point
+from flask_jwt_extended import JWTManager
 from src.constants.http_constants import HTTP_200_OK,HTTP_404_NOT_FOUND, HTTP_500_INTERNAL_SERVER_ERROR
 
 def create_app(test_conifg=None):
@@ -20,6 +21,7 @@ def create_app(test_conifg=None):
 
    db.app=app
    db.init_app(app)
+   JWTManager(app)
 
    app.register_blueprint(auth)
    app.register_blueprint(area)
