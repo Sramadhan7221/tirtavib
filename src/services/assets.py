@@ -1,11 +1,13 @@
 from flask import Blueprint,request,jsonify
 from src.database import Asset,Area,db
 from datetime import datetime
+from flask_jwt_extended import jwt_required
 from src.constants.http_constants import HTTP_201_CREATED,HTTP_200_OK,HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND,HTTP_409_CONFLICT
 
 assets = Blueprint("assets",__name__,url_prefix="/assets")
 
 @assets.route("/", methods=['POST','GET'])
+@jwt_required(locations='headers')
 def handle_assets():
    if request.method == 'POST':
       nama = request.get_json().get('nama','')
@@ -79,6 +81,7 @@ def handle_assets():
       return jsonify({'data':data}),HTTP_200_OK
 
 @assets.get("/detail/<int:asset_id>")
+@jwt_required(locations='headers')
 def detail_handler(asset_id):
    detail_asset = Asset.query.filter_by(id=asset_id).first()
 
@@ -93,6 +96,7 @@ def detail_handler(asset_id):
    }),HTTP_200_OK
 
 @assets.patch("/edit/<int:asset_id>")
+@jwt_required(locations='headers')
 def edit_handler(asset_id):
    edit_asset = Asset.query.filter_by(id=asset_id).first()
 
@@ -129,6 +133,7 @@ def edit_handler(asset_id):
    }),HTTP_200_OK
 
 @assets.delete('/delete/<int:asset_id>')
+@jwt_required(locations='headers')
 def handle_delete(asset_id):
    deleted_asset = Asset.query.filter_by(id=asset_id).first()
 

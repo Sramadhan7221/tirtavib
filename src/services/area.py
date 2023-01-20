@@ -1,7 +1,7 @@
 from flask import Blueprint,request,jsonify
 from src.database import Area,db
 from datetime import datetime
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required
 from src.constants.http_constants import HTTP_201_CREATED,HTTP_200_OK,HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND,HTTP_409_CONFLICT
 
 area = Blueprint("area",__name__, url_prefix="/areas")
