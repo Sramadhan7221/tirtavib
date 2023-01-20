@@ -9,36 +9,36 @@ from flask_jwt_extended import jwt_required, create_access_token,create_refresh_
 auth = Blueprint("auth",__name__, url_prefix="/auth")
 
 @auth.post('/register')
-@jwt_required('header')
-# @swag_from('./docs/auth/register.yaml')
+# @jwt_required('header')
 def register():
-   user_id = get_jwt_identity()
-   user = Users.query.filter_by(id=user_id).first()
+   # user_id = get_jwt_identity()
+   # user = Users.query.filter_by(id=user_id).first()
+   
+   # if (user.role != "superadmin" or user.role != "Superadmin"):
+   #    return jsonify({'error': "Role tidak memiliki akses terhadap menu ini"}),HTTP_401_UNAUTHORIZED
 
    nama = request.json['nama']
    email = request.json['email']
    password = request.json['password']
+   role = request.json['role']
 
    if len(password)<6:
-      return jsonify({'error': "Password Too Short"}), HTTP_400_BAD_REQUEST
+      return jsonify({'error': "Password Terlalu pendek"}), HTTP_400_BAD_REQUEST
 
    if len(nama)<3:
-      return jsonify({'error': "User Too Short"}), HTTP_400_BAD_REQUEST
+      return jsonify({'error': "Nama Terlalu pendek"}), HTTP_400_BAD_REQUEST
 
-   if not nama.isalnum() or " " in nama:
-      return jsonify({'error': "User Should be Alphanumeric and dont have spaces"}), HTTP_400_BAD_REQUEST
+   if not nama.isalpha() :
+      return jsonify({'error': "Nama tidak valid , nama tidak boleh terdapat karakter selain huruf"}), HTTP_400_BAD_REQUEST
 
    if not validators.email(email):
-      return jsonify({'error': "Email is not valid"}), HTTP_400_BAD_REQUEST
+      return jsonify({'error': "Email Tidak valid"}), HTTP_400_BAD_REQUEST
 
    if Users.query.filter_by(email=email).first() is not None:
-      return jsonify({'error': "Email is already registered"}), HTTP_409_CONFLICT
-
-   if Users.query.filter_by(nama=nama).first() is not None:
-      return jsonify({'error': "username is used by another account"}), HTTP_409_CONFLICT
+      return jsonify({'error': "Email sudah terdaftar"}), HTTP_409_CONFLICT
 
    pwd_hash = generate_password_hash(password)
-   user = Users(nama=nama,password=pwd_hash,email=email)
+   user = Users(nama=nama,password=pwd_hash,email=email,role=role)
    
    db.session.add(user)
    db.session.commit()
