@@ -8,6 +8,7 @@ isee = Blueprint("isee", __name__, url_prefix="/api-isee")
 def getAllData():
    responseLogin = loginAPP()
    token = responseLogin.token
+   
    return responseLogin
 
 
