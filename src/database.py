@@ -79,7 +79,7 @@ class Tresholds(db.Model):
    create_at = db.Column(db.DateTime(), default=datetime.now())
    last_update_at = db.Column(db.DateTime(), onupdate=datetime.now())
    delete_at = db.Column(db.DateTime(), nullable=True)
-   measure_point_id = db.Column(db.String(36), db.ForeignKey('measure_point.id'), nullable=False)
+   measure_point_id = db.Column(db.String(36), db.ForeignKey('measure_point.id_api'), nullable=False)
 
    def __init__(self,**kwargs):
       super().__init__(**kwargs)

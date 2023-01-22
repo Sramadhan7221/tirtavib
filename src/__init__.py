@@ -5,6 +5,7 @@ from src.services.area import area
 from src.services.assets import assets
 from src.services.auth import auth
 from src.services.measure_point import measure_point
+from src.services.api_isee_service import isee
 from flask_jwt_extended import JWTManager
 from src.constants.http_constants import HTTP_200_OK,HTTP_404_NOT_FOUND, HTTP_500_INTERNAL_SERVER_ERROR
 
@@ -27,6 +28,7 @@ def create_app(test_conifg=None):
    app.register_blueprint(area)
    app.register_blueprint(assets)
    app.register_blueprint(measure_point)
+   app.register_blueprint(isee)
 
    @app.route('/')
    def index():
