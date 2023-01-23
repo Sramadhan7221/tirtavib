@@ -80,6 +80,18 @@ def handle_assets():
 
       return jsonify({'data':data}),HTTP_200_OK
 
+@assets.get("/assets-mp")
+def getListAsset():
+   assets = db.session.execute(db.select(Asset.name, Asset.mps).order_by(Asset.area_id)).all()
+   data = []
+   for item in assets:
+      data.append({
+         'nama' : item["name"],
+         'list_mps': item.mps
+      })
+
+   return jsonify({'data': data})
+
 @assets.get("/detail/<int:asset_id>")
 @jwt_required(locations='headers')
 def detail_handler(asset_id):
