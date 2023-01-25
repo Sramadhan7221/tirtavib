@@ -1,5 +1,5 @@
 from flask import Blueprint,request,jsonify
-from src.database import Asset,Area,db
+from src.database import Asset,Area,MeasurePoint,db
 from datetime import datetime
 from flask_jwt_extended import jwt_required
 from src.constants.http_constants import HTTP_201_CREATED,HTTP_200_OK,HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND,HTTP_409_CONFLICT
@@ -82,12 +82,17 @@ def handle_assets():
 
 @assets.get("/assets-mp")
 def getListAsset():
-   assets = db.session.execute(db.select(Asset.name, Asset.mps).order_by(Asset.area_id)).all()
+   assets = db.session.execute(db.select(Asset.id, Asset.name, Asset.mps).order_by(Asset.area_id)).all()
    data = []
    for item in assets:
+      Mps = MeasurePoint.query.filter_by(asset_id=item.id).order_by(MeasurePoint.id).all()
+      list_mps = []
+      for mp in Mps:
+         list_mps.append(mp.id_api)
+
       data.append({
          'nama' : item["name"],
-         'list_mps': item.mps
+         'list_mps': list_mps
       })
 
    return jsonify({'data': data})

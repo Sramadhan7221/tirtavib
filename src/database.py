@@ -53,11 +53,12 @@ class MeasurePoint(db.Model):
    name = db.Column(db.String(150), nullable=False)
    accel = db.Column(db.Float, nullable=False)
    velocity = db.Column(db.Float, nullable=False)
+   peak_peak = db.Column(db.Float, nullable=False)
    create_at = db.Column(db.DateTime(), default=datetime.now())
    last_update_at = db.Column(db.DateTime(), onupdate=datetime.now())
    delete_at = db.Column(db.DateTime(), nullable=True)
    asset_id = db.Column(db.Integer, db.ForeignKey('asset.id'), nullable=False)
-   tresholds = db.relationship('Tresholds', backref='measure_points', lazy=True)
+   tresholds = db.relationship('Thresholds', backref='measure_points', lazy=True)
 
    def __init__(self,**kwargs):
       super().__init__(**kwargs)
@@ -65,26 +66,20 @@ class MeasurePoint(db.Model):
    def __ref__(self) -> str:
       return 'MP>>> {self.name}'
 
-class Tresholds(db.Model):
+class Thresholds(db.Model):
    id = db.Column(db.String(36), primary_key=True)
    title = db.Column(db.String(150), nullable=False)
-   name = db.Column(db.String(100), nullable=False)
-   emergency_min = db.Column(db.Float, nullable=True, default=0)
-   emergency_max = db.Column(db.Float, nullable=True,
-   default=0)
-   alert_min = db.Column(db.Float, nullable=True,
-   default=0)
-   alert_max = db.Column(db.Float, nullable=True,
-   default=0)
+   max_alert = db.Column(db.Float, nullable=True)
+   max_warn = db.Column(db.Float, nullable=True)
    create_at = db.Column(db.DateTime(), default=datetime.now())
    last_update_at = db.Column(db.DateTime(), onupdate=datetime.now())
    delete_at = db.Column(db.DateTime(), nullable=True)
-   measure_point_id = db.Column(db.String(36), db.ForeignKey('measure_point.id_api'), nullable=False)
+   measure_point_id_api = db.Column(db.String(36), db.ForeignKey('measure_point.id_api'), nullable=False)
 
    def __init__(self,**kwargs):
       super().__init__(**kwargs)
 
-      self.id = uuid4()
+      self.id = str(uuid4())
 
    def __ref__(self) -> str:
-      return 'Treshold>>> {self.id}'
+      return 'Threshold>>> {self.id}'
