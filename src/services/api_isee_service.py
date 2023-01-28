@@ -68,11 +68,14 @@ def sync():
 @isee.get("/syncronize-mp")
 def sync_mp():
    asset_id = request.args.get('asset_id','')
+   area = request.args.get('is_area')
    MPS = db.session.execute(db.select(MeasurePoint.id_api, MeasurePoint.asset_id, MeasurePoint.accel, MeasurePoint.velocity,MeasurePoint.peak_peak, MeasurePoint.updated_api).order_by(MeasurePoint.asset_id)).all()
    
    if asset_id:
       MPS = MeasurePoint.query.filter_by(asset_id=asset_id).order_by(MeasurePoint.asset_id).all()
-   
+   if asset_id and area:
+      MPS = get_MP_byArea(asset_id)
+
    token = loginAPP()
    header = {'Authorization': 'Bearer {}'.format(token)}
    mps_results = []
@@ -107,3 +110,14 @@ def sync_mp():
          'peak_peak':item.peak_peak
       })
    return jsonify({'data':mps_results})
+
+def get_MP_byArea(area_id):
+   assets = Asset.query.filter_by(area_id=area_id).all()
+   MPS = []
+
+   for item in assets:
+      mps = MeasurePoint.query.filter_by(asset_id=item.id).all()
+      for mp in mps:
+         MPS.append(mp)
+
+   return MPS
