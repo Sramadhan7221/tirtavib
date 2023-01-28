@@ -1,7 +1,8 @@
-from flask import Blueprint,jsonify
+from flask import Blueprint,jsonify,request
 import os
 import requests
-from src.database import MeasurePoint,Thresholds,db
+from src.database import Asset,MeasurePoint,Thresholds,db
+from src.constants.http_constants import HTTP_404_NOT_FOUND
 
 isee = Blueprint("isee", __name__, url_prefix="/api-isee")
 
@@ -33,11 +34,6 @@ def sync():
    header = {'Authorization': 'Bearer {}'.format(token)}
    mps_results = []
    for item in MPS:
-      # threshold = Thresholds.query.filter_by(measure_point_id_api=item.id_api).first()
-      # if not threshold:
-      #    new_MP = Thresholds(title=)
-      #    db.session.add(new_MP)
-      #    db.session.commit()
       threshold_api = requests.get(f"https://isee.icareweb.com/apiv4/assets/{item.id_api}/thresholds",headers=header)
       result_api = threshold_api.json()
       results = []
@@ -67,4 +63,47 @@ def sync():
          'thresholds': results
       })
 
+   return jsonify({'data':mps_results})
+
+@isee.get("/syncronize-mp")
+def sync_mp():
+   asset_id = request.args.get('asset_id','')
+   MPS = db.session.execute(db.select(MeasurePoint.id_api, MeasurePoint.asset_id, MeasurePoint.accel, MeasurePoint.velocity,MeasurePoint.peak_peak, MeasurePoint.updated_api).order_by(MeasurePoint.asset_id)).all()
+   
+   if asset_id:
+      MPS = MeasurePoint.query.filter_by(asset_id=asset_id).order_by(MeasurePoint.asset_id).all()
+   
+   token = loginAPP()
+   header = {'Authorization': 'Bearer {}'.format(token)}
+   mps_results = []
+
+   for item in MPS:
+      mpItem = MeasurePoint.query.filter_by(id_api=item.id_api).first()
+      mp_api = requests.get(f"https://isee.icareweb.com/apiv4/assets/{item.id_api}/results",headers=header)
+      result_api = mp_api.json()
+      if not result_api["_embedded"]:
+         continue
+      mp_api_update = result_api["_embedded"]
+      mpItem.updated_api = result_api["_updated"]
+      for result in mp_api_update:
+         itemval = result["statistics"]
+         res = {}
+         for stat in itemval:
+            if stat["global_type"] == "acceleration":
+               res['accel'] = stat["value"]
+            if stat["global_type"] == "velocity":
+               res['velocity'] = stat["value"]
+            if stat["global_type"] == "peak-peak":
+               res['peak_peak'] = stat["value"]
+         mpItem.accel = res["accel"]
+         mpItem.velocity = res["velocity"]
+         mpItem.peak_peak = res["peak_peak"]
+         db.session.commit()
+         break
+      mps_results.append({
+         'id':item.id,
+         'velocity':item.velocity,
+         'accel':item.accel,
+         'peak_peak':item.peak_peak
+      })
    return jsonify({'data':mps_results})

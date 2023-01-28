@@ -55,6 +55,7 @@ class MeasurePoint(db.Model):
    velocity = db.Column(db.Float, nullable=False)
    peak_peak = db.Column(db.Float, nullable=False)
    create_at = db.Column(db.DateTime(), default=datetime.now())
+   updated_api = db.Column(db.String(150), nullable=True)
    last_update_at = db.Column(db.DateTime(), onupdate=datetime.now())
    delete_at = db.Column(db.DateTime(), nullable=True)
    asset_id = db.Column(db.Integer, db.ForeignKey('asset.id'), nullable=False)
