@@ -1,8 +1,5 @@
 from flask import Flask,jsonify
 import os
-import time
-import atexit
-from apscheduler.schedulers.background import BackgroundScheduler
 from src.database import db
 from src.services.area import area
 from src.services.assets import assets
@@ -42,17 +39,7 @@ def create_app(test_conifg=None):
 
    def home():
       return jsonify({"status": HTTP_200_OK,"message": "Welcome To  Dashboard TirtaVib API"})
-   
-   def job():
-      print("I'm working...")
-
-   scheduler = BackgroundScheduler()
-   scheduler.add_interval_job(func=job,trigger="interval", seconds=10)
-   scheduler.start()
-
-   # Shut down the scheduler when exiting the app
-   atexit.register(lambda: scheduler.shutdown())
-
+      
    @app.errorhandler(HTTP_404_NOT_FOUND)
    def handle_404(e):
       return jsonify({'error': 'Not Found'}), HTTP_404_NOT_FOUND

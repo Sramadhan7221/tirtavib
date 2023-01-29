@@ -1,5 +1,8 @@
 from flask import Blueprint,jsonify,request
 import os
+import time
+import atexit
+from apscheduler.schedulers.background import BackgroundScheduler
 import requests
 from src.database import Asset,MeasurePoint,Thresholds,db
 from src.constants.http_constants import HTTP_404_NOT_FOUND
@@ -121,3 +124,14 @@ def get_MP_byArea(area_id):
          MPS.append(mp)
 
    return MPS
+
+
+# def job():
+#    print("I'm working...")
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(func=sync_mp,trigger="interval", seconds=21600)
+scheduler.start()
+
+# Shut down the scheduler when exiting the app
+atexit.register(lambda: scheduler.shutdown())

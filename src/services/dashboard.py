@@ -50,15 +50,15 @@ def home():
          as status
          from measure_point mp 
          join asset a ON a.id = mp.asset_id 
-         WHERE mp.asset_id = '''+mp.id
+         WHERE mp.asset_id = %d;'''%mp.id
       ).all()
-      for item in mp_query:
+      for mpq in mp_query:
          mp_data.append({
-            'nama' : item.nama,
-            'accel': item.accel,
-            'velocity': item.velocity,
-            'peak_peak': item.peak_peak,
-            'status': item.status
+            'nama' : mpq.nama,
+            'accel': mpq.accel,
+            'velocity': mpq.velocity,
+            'peak_peak': mpq.peak_peak,
+            'status': mpq.status
          })
       item['measure_points'] = mp_data
       data.append(item)
