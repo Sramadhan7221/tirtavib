@@ -8,7 +8,7 @@ venv/
 
 *.pyc
 
-# instance/
+instance/
 
 ### Flask ###
 instance/*
