@@ -69,7 +69,8 @@ def login():
             'user':{
                'refresh': refresh,
                'access': access,
-               'email':user.email
+               'email':user.email,
+               'base_url': request.base_url
             }
          })
 

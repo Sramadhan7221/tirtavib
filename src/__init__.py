@@ -1,4 +1,4 @@
-from flask import Flask,jsonify
+from flask import Flask,jsonify,request,redirect,render_template
 import os
 from src.database import db
 from src.services.area import area
@@ -9,6 +9,7 @@ from src.services.api_isee_service import isee
 from src.services.dashboard import dashboard
 from flask_jwt_extended import JWTManager
 from src.constants.http_constants import HTTP_200_OK,HTTP_404_NOT_FOUND, HTTP_500_INTERNAL_SERVER_ERROR
+from flask_jwt_extended import get_jwt_identity
 
 def create_app(test_conifg=None):
    app = Flask(__name__, instance_relative_config=True,template_folder='templates')
@@ -34,11 +35,18 @@ def create_app(test_conifg=None):
 
    @app.route('/')
    def index():
-      return jsonify({"status": HTTP_200_OK,"message": "Welcome To TirtaVib API"})
-   @app.route('/dashboard')
+      user_id = get_jwt_identity()
+      if not user_id:
+         return redirect(f"{request.base_url}/login")
 
+      return jsonify({
+         "status": HTTP_200_OK,"message": "Welcome To TirtaVib API",
+         "url": request.base_url
+      })
+
+   @app.route("/login")
    def home():
-      return jsonify({"status": HTTP_200_OK,"message": "Welcome To  Dashboard TirtaVib API"})
+      return render_template('index.html')
       
    @app.errorhandler(HTTP_404_NOT_FOUND)
    def handle_404(e):
