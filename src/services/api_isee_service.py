@@ -43,7 +43,7 @@ def sync(param1=None):
          INNER JOIN area a2 ON a2.id = a.area_id 
          WHERE a2.id = %d
          ORDER BY mp.asset_id;
-         '''%area_id).order_by(MeasurePoint.asset_id).all()
+         '''%area_id).all()
    token = loginAPP()
    header = {'Authorization': 'Bearer {}'.format(token)}
    mps_results = []
