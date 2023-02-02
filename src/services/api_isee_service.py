@@ -75,7 +75,7 @@ def sync_mp():
    MPS = db.session.execute(db.select(MeasurePoint.id_api, MeasurePoint.asset_id, MeasurePoint.accel, MeasurePoint.velocity,MeasurePoint.peak_peak, MeasurePoint.updated_api).order_by(MeasurePoint.asset_id)).all()
    
    if asset_id:
-      MPS = MeasurePoint.query.filter_by(asset_id=asset_id).order_by(MeasurePoint.asset_id).all()
+      MPS = MeasurePoint.query.filter_by(asset_id=asset_id, delete_at=None).order_by(MeasurePoint.asset_id).all()
    if asset_id and area:
       MPS = get_MP_byArea(asset_id)
 
@@ -119,7 +119,7 @@ def get_MP_byArea(area_id):
    MPS = []
 
    for item in assets:
-      mps = MeasurePoint.query.filter_by(asset_id=item.id).all()
+      mps = MeasurePoint.query.filter_by(asset_id=item.id,delete_at= None).all()
       for mp in mps:
          MPS.append(mp)
 

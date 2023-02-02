@@ -35,18 +35,14 @@ def create_app(test_conifg=None):
 
    @app.route('/')
    def index():
-      user_id = get_jwt_identity()
-      if not user_id:
-         return redirect(f"{request.base_url}/login")
-
       return jsonify({
          "status": HTTP_200_OK,"message": "Welcome To TirtaVib API",
          "url": request.base_url
       })
 
-   @app.route("/login")
+   @app.route("/dashboard")
    def home():
-      return render_template('index.html')
+      return render_template('dashboard_v1.html')
       
    @app.errorhandler(HTTP_404_NOT_FOUND)
    def handle_404(e):
