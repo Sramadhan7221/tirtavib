@@ -32,7 +32,16 @@ def loginAPP():
 
 @isee.get("/syncronize-threshold")
 def sync():
+   area_id = request.args.get('area_id',type=int)
    MPS = db.session.execute(db.select(MeasurePoint.id_api, MeasurePoint.asset_id).order_by(MeasurePoint.asset_id)).all()
+   if area_id:
+      MPS = db.engine.execute('''
+         SELECT mp.id_api , mp.asset_id  FROM measure_point mp 
+         INNER JOIN asset a ON a.id = mp.asset_id 
+         INNER JOIN area a2 ON a2.id = a.area_id 
+         WHERE a2.id = %d
+         ORDER BY mp.asset_id;
+         '''%area_id).order_by(MeasurePoint.asset_id).all()
    token = loginAPP()
    header = {'Authorization': 'Bearer {}'.format(token)}
    mps_results = []
@@ -72,7 +81,7 @@ def sync():
 def sync_mp():
    asset_id = request.args.get('asset_id','')
    area = request.args.get('is_area')
-   MPS = db.session.execute(db.select(MeasurePoint.id_api, MeasurePoint.asset_id, MeasurePoint.accel, MeasurePoint.velocity,MeasurePoint.peak_peak, MeasurePoint.updated_api).order_by(MeasurePoint.asset_id)).all()
+   MPS = db.session.execute(db.select(MeasurePoint.id_api, MeasurePoint.asset_id, MeasurePoint.accel, MeasurePoint.velocity,MeasurePoint.peak_peak, MeasurePoint.dna12, MeasurePoint.dna500, MeasurePoint.updated_api).order_by(MeasurePoint.asset_id)).all()
    
    if asset_id:
       MPS = MeasurePoint.query.filter_by(asset_id=asset_id, delete_at=None).order_by(MeasurePoint.asset_id).all()
@@ -101,6 +110,10 @@ def sync_mp():
                res['velocity'] = stat["value"]
             if stat["global_type"] == "peak-peak":
                res['peak_peak'] = stat["value"]
+            if stat["global_type"] == "dna12":
+               res['dna12'] = stat["value"]
+            if stat["global_type"] == "dna500":
+               res['dna500'] = stat["value"]
          mpItem.accel = res["accel"]
          mpItem.velocity = res["velocity"]
          mpItem.peak_peak = res["peak_peak"]
