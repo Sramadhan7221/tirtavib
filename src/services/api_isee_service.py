@@ -119,9 +119,13 @@ def sync_mp(param1=None,param2=None):
                res['dna12'] = stat["value"]
             if stat["global_type"] == "dna500":
                res['dna500'] = stat["value"]
-         mpItem.accel = res["accel"]
-         mpItem.velocity = res["velocity"]
-         mpItem.peak_peak = res["peak_peak"]
+         if 'dna12' in res or 'dna500' in res:
+            mpItem.dna12 = res["dna12"]
+            mpItem.dna500 = res["dna500"]
+         else:
+            mpItem.accel = res["accel"]
+            mpItem.velocity = res["velocity"]
+            mpItem.peak_peak = res["peak_peak"]
          db.session.commit()
          break
       mps_results.append({
