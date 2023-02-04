@@ -50,34 +50,34 @@ justify-content: center;
 .manual-btn:hover{
     background: rgb(255, 255, 255);
 }
-#radio1:checked ~ .first{
+#radio1:checked ~  .first{
     margin-left: 0;
 }
-#radio2:checked ~ .first{
+#radio2:checked ~  .first{
     margin-left: -10%;
 }
-#radio3:checked ~ .first{
+#radio3:checked ~  .first{
     margin-left: -20%;
 }
-#radio4:checked ~ .first{
+#radio4:checked ~  .first{
     margin-left: -30%;
 }
-#radio5:checked ~ .first{
+#radio5:checked ~  .first{
     margin-left: -40%;
 }
-#radio6:checked ~ .first{
+#radio6:checked ~  .first{
     margin-left: -50%;
 }
-#radio7:checked ~ .first{
+#radio7:checked ~  .first{
     margin-left: -60%;
 }
-#radio8:checked ~ .first{
+#radio8:checked  ~  .first{
     margin-left: -70%;
 }
-#radio9:checked ~ .first{
+#radio9:checked ~  .first{
     margin-left: -80%;
 }
-#radio10:checked ~ .first{
+#radio10:checked ~  .first{
     margin-left: -90%;
 }
 

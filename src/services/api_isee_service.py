@@ -147,23 +147,23 @@ def get_MP_byArea(area_id):
 
    return MPS
 
-def job_syncMp():
+async def job_syncMp():
    area = db.session.execute(db.select(Asset.area_id).group_by(Asset.area_id).order_by(Asset.area_id)).all()
    for item in area:
-      sync_mp(item.area_id,True)
+      await sync_mp(item.area_id,True)
 
-def job_syncTreshshold():
+async def job_syncTreshshold():
    area = db.session.execute(db.select(Asset.area_id).group_by(Asset.area_id).order_by(Asset.area_id)).all()
    for item in area:
-      sync(item.area_id)
+      await sync(item.area_id)
 
 # def job():
 #    print("I'm working...")
 
-scheduler = BackgroundScheduler()
-scheduler.add_job(func=job_syncMp,trigger="interval", seconds=7200)
-scheduler.add_job(func=job_syncTreshshold,trigger="interval", seconds=19800)
-scheduler.start()
+# scheduler = BackgroundScheduler()
+# scheduler.add_job(func=job_syncMp,trigger="interval", seconds=1800)
+# scheduler.add_job(func=job_syncTreshshold,trigger="interval", seconds=1800)
+# scheduler.start()
 
-# Shut down the scheduler when exiting the app
-atexit.register(lambda: scheduler.shutdown())
+# # Shut down the scheduler when exiting the app
+# atexit.register(lambda: scheduler.shutdown())
