@@ -6,14 +6,19 @@ dashboard = Blueprint("dashboard", __name__, url_prefix="/dashboard")
 
 @dashboard.get("/v1")
 def home():
-   data = []
-   id_area = request.args.get('area')
-   area_mp = Asset.query.filter_by(area_id=1).all()
-   if id_area:
-      area_mp = Asset.query.filter_by(area_id=id_area).all()
+   data = {}
+   id_area = request.args.get('area',type=int)
 
-   for mp in area_mp:
-      mp_query = db.engine.execute('''
+   if not id_area:
+      id_area = 1
+   
+   area_name = db.engine.execute('''SELECT name , 
+	(SELECT COUNT(mp.id) FROM measure_point mp JOIN asset a ON a.id = mp.asset_id WHERE a.area_id = ar.id) jumlah FROM area ar 
+   WHERE ar.id = %d'''%id_area).first()   
+   data['area_name'] = area_name.name
+   data['jumlah'] = area_name.jumlah
+   data['measure_points'] = []
+   mp_query = db.engine.execute('''
          SELECT a.id, a.name ||' '|| mp.name as nama ,accel ,velocity ,peak_peak ,updated_api ,
          CASE 
             WHEN 
@@ -56,23 +61,26 @@ def home():
          END
          as status
          from measure_point mp 
-         join asset a ON a.id = mp.asset_id 
-         WHERE mp.asset_id = %d;'''%mp.id
+         join asset a ON a.id = mp.asset_id
+         join area ar ON ar.id = a.area_id
+         WHERE ar.id = %d;'''%id_area
       ).all()
-      for mpq in mp_query:
-         data.append({
-            'nama' : mpq.nama,
-            'accel': mpq.accel,
-            'velocity': mpq.velocity,
-            'peak_peak': mpq.peak_peak,
-            'status': mpq.status,
-            'last_update': mpq.updated_api
-         })
+
+   for mpq in mp_query:
+      data['measure_points'].append({
+         'nama' : mpq.nama,
+         'accel': mpq.accel,
+         'velocity': mpq.velocity,
+         'peak_peak': mpq.peak_peak,
+         'status': mpq.status,
+         'last_update': mpq.updated_api
+      })
    
+
    return jsonify({'data': data})
 
 @dashboard.get("/v2")
-def home():
+def home2():
    data = []
    id_area = request.args.get('area')
    area_mp = Asset.query.filter_by(area_id=1).all()
