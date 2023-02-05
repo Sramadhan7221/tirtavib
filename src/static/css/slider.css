@@ -7,79 +7,84 @@ body{
 }
 .slider{
     width: 100%;
-    height: 730px;
+    height: 100%;
     box-shadow: 1px 1px 1px rgb(187, 186, 186);
     overflow: hidden;
     margin-bottom: 24px;
 }
 .slides{
-    width: 1000%;
-    height: 730px;
+    width: 1800%;
+    height: 100%;
     display: flex;
 }
 .slides input{
     display: none;
 }
+
 .slide{
-    width: 10%;
+    width: 5.5%;
     transition: 2s;
 }
 .slide .content{
     width: 100%;
-    height: 730px;
+    height: 100%;
     background-color: #f4f6f9; /* old value:  rgb(81, 124, 143); */
 }
-.navigation-manual{
-position: absolute;
-width: 100%;
-margin-top: -40px;
-display: flex;
-justify-content: center;
-}
-.manual-btn{
-    border: 1px solid #ffffff;
-    padding: 5px;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: 1s;
-
-}
-.manual-btn:not(:last-child){
-    margin-right: 40px;
-}
-.manual-btn:hover{
-    background: rgb(255, 255, 255);
-}
-#radio1:checked ~  .first{
+#radio1:checked ~ .first{
     margin-left: 0;
 }
-#radio2:checked ~  .first{
-    margin-left: -10%;
+#radio2:checked ~ .first{
+    margin-left: -5.5%;
 }
-#radio3:checked ~  .first{
-    margin-left: -20%;
+#radio3:checked ~ .first{
+    margin-left: -11%;
 }
-#radio4:checked ~  .first{
-    margin-left: -30%;
+#radio4:checked ~ .first{
+    margin-left: -16.5%;
 }
-#radio5:checked ~  .first{
-    margin-left: -40%;
+#radio5:checked ~ .first{
+    margin-left: -22%;
 }
-#radio6:checked ~  .first{
-    margin-left: -50%;
+#radio6:checked ~ .first{
+    margin-left: -27.5%;
 }
-#radio7:checked ~  .first{
-    margin-left: -60%;
+#radio7:checked ~ .first{
+    margin-left: -33%;
 }
-#radio8:checked  ~  .first{
-    margin-left: -70%;
+#radio8:checked ~ .first{
+    margin-left: -38.5%;
 }
-#radio9:checked ~  .first{
-    margin-left: -80%;
+#radio9:checked ~ .first{
+    margin-left: -44%;
 }
-#radio10:checked ~  .first{
-    margin-left: -90%;
+#radio10:checked ~ .first{
+    margin-left: -49.5%;
 }
+#radio11:checked ~ .first{
+    margin-left: -55%;
+}
+#radio12:checked ~ .first{
+    margin-left: -60.5%;
+}
+#radio13:checked ~ .first{
+    margin-left: -66%;
+}
+#radio14:checked ~ .first{
+    margin-left: -71.5%;
+}
+#radio15:checked ~ .first{
+    margin-left: -77%;
+}
+#radio16:checked ~ .first{
+    margin-left: -82.5%;
+}
+#radio17:checked ~ .first{
+    margin-left: -88%;
+}
+#radio18:checked ~ .first{
+    margin-left: -93.45%;
+}
+
 
 
 .navigation-auto{
@@ -90,7 +95,6 @@ justify-content: center;
     margin-top: 690px;
 }
 .navigation-auto div{
-    border: 1px solid rgb(255, 255, 255);
     padding: 5px;
     border-radius: 10px;
     transition: 1s;
@@ -98,34 +102,6 @@ justify-content: center;
 .navigation-auto div:not(:last-child){
     margin-right: 40px;
 }
-#radio1:checked ~ .navigation-auto .auto-btn1{
-    background: rgb(255, 255, 255);
+.ms{
+    margin-left: 4em;
 }
-#radio2:checked ~ .navigation-auto .auto-btn2{
-    background: rgb(255, 255, 255);
-}
-#radio3:checked ~ .navigation-auto .auto-btn3{
-    background: rgb(255, 255, 255);
-}
-#radio4:checked ~ .navigation-auto .auto-btn4{
-    background: rgb(255, 255, 255);
-}
-#radio5:checked ~ .navigation-auto .auto-btn5{
-    background: rgb(255, 255, 255);
-}
-#radio6:checked ~ .navigation-auto .auto-btn6{
-    background: rgb(255, 255, 255);
-}
-#radio7:checked ~ .navigation-auto .auto-btn7{
-    background: rgb(255, 255, 255);
-}
-#radio8:checked ~ .navigation-auto .auto-btn8{
-    background: rgb(255, 255, 255);
-}
-#radio9:checked ~ .navigation-auto .auto-btn9{
-    background: rgb(255, 255, 255);
-}
-#radio10:checked ~ .navigation-auto .auto-btn10{
-    background: rgb(255, 255, 255);
-}
-
