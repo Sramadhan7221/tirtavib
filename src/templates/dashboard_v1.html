@@ -31,7 +31,7 @@
 <body class="bg-light">
     <!-- Slider Start-->
     <div class="slider">
-        <div class="slides">
+        <div class="slides" id="container">
             <!-- Radio Button Start-->
             <input type="radio" name="radio-btn" id="radio1">
             <input type="radio" name="radio-btn" id="radio2">
@@ -51,13 +51,8 @@
             <input type="radio" name="radio-btn" id="radio16">
             <input type="radio" name="radio-btn" id="radio17">
             <input type="radio" name="radio-btn" id="radio18">
-            <!-- Radio Button End--
-            <!-- Slide Content Start-->
-            <!-- VCM -->
-            <div id="container" style="width: 100%;">
-
-            </div>
-            <!-- Slide Content End-->
+            <!-- Radio Button End-->
+            
             <!-- Automatic Navigation Start-->
             <div class="navigation-auto">
                 <div class="auto-btn1"></div>
@@ -78,7 +73,6 @@
                 <div class="auto-btn16"></div>
                 <div class="auto-btn17"></div>
                 <div class="auto-btn18"></div>
-     
             </div>
             <!-- Automatic Navigation End-->
 
@@ -97,7 +91,7 @@
 </script>
 
 <!-- Bootstrap 4 -->
-<script src={{ url_for('static',filename="plugin/bootstrap/js/bootstrap.bundle.min.js") }}></script>
+<script src="{{ url_for('static',filename="plugin/bootstrap/js/bootstrap.bundle.min.js") }}"></script>
 <!-- JQVMap -->
 <script src="{{ url_for('static',filename="plugin/jqvmap/jquery.vmap.min.js") }}"></script>
 <script src="{{ url_for('static', filename="plugin/jqvmap/maps/jquery.vmap.usa.js") }}"></script>
