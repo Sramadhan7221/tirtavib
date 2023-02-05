@@ -86,11 +86,12 @@ async function callAPI(areaId) {
                         <li class="nav-item align-items-center ">
                               <!-- Brand Logo -->
                               <a href="" class="navbar-brand ml-4">
-                                 <img src="{{ url_for('static', filename="img/AGC.jpg")}}" alt="AGC" class="brand-image rounded" style="opacity: .8"width="90" height="100%">
+                              <div id="image"></div>
+                              <img src="static/img/AGC.jpg" alt="AGC" class="brand-image rounded" style="opacity: .8"width="90" height="100%">
                               </a>
                         </li>
                         <li class="nav-item mx-auto mt-2 align-items-center">
-                              <h2 class="bg-primary px-1 shadow rounded ">${area_name}</h2>
+                              <h2 class="bg-primary px-1 shadow rounded ms px-5 py-1">${area_name}</h2>
                         </li>
                         <li class="navbar-nav pr-3 align-items-center">
                               <h5>Vibration Monitoring</h5>
