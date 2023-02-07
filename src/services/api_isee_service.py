@@ -31,10 +31,8 @@ def loginAPP():
    return db_token["token"]
 
 @isee.get("/syncronize-threshold")
-def sync(param1=None):
-   area_id = request.args.get('area_id',type=int)
-   if param1:
-      area_id = param1
+def sync():
+   area_id = request.args.get('area_id')
    MPS = db.session.execute(db.select(MeasurePoint.id_api, MeasurePoint.asset_id).order_by(MeasurePoint.asset_id)).all()
    if area_id:
       MPS = db.engine.execute('''
@@ -50,8 +48,9 @@ def sync(param1=None):
    for item in MPS:
       threshold_api = requests.get(f"https://isee.icareweb.com/apiv4/assets/{item.id_api}/thresholds",headers=header)
       result_api = threshold_api.json()
+      result_fromAPI = result_api["dna"] if 'dna' in result_api else result_api["vibration"]
       results = []
-      for item_res in result_api["vibration"]:
+      for item_res in result_fromAPI:
          is_exist = Thresholds.query.filter_by(measure_point_id_api=item.id_api,title=item_res["threshold_type"]).first()
          levels = item_res["levels"]
          if is_exist:
@@ -80,12 +79,9 @@ def sync(param1=None):
    return jsonify({'data':mps_results})
 
 @isee.get("/syncronize-mp")
-def sync_mp(param1=None,param2=None):
+def sync_mp():
    asset_id = request.args.get('asset_id','')
    area = request.args.get('is_area')
-   if param1 and param2:
-      asset_id = param1,
-      area = param2
    MPS = db.session.execute(db.select(MeasurePoint.id_api, MeasurePoint.asset_id, MeasurePoint.accel, MeasurePoint.velocity,MeasurePoint.peak_peak, MeasurePoint.dna12, MeasurePoint.dna500, MeasurePoint.updated_api).order_by(MeasurePoint.asset_id)).all()
    
    if asset_id:

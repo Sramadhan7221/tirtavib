@@ -19,7 +19,7 @@ def home():
    data['jumlah'] = area_name.jumlah
    data['measure_points'] = []
    mp_query = db.engine.execute('''
-         SELECT a.id, a.name ||' '|| mp.name as nama ,accel ,velocity ,peak_peak ,updated_api ,
+         SELECT a.id, a.name ||' '|| mp.name as nama ,accel ,velocity ,peak_peak ,updated_api , dna12, dna500,
          CASE 
             WHEN 
                (SELECT max_warn FROM thresholds t WHERE title = 'acceleration' and measure_point_id_api = mp.id_api) and (SELECT max_alert FROM thresholds t WHERE title = 'acceleration' and measure_point_id_api = mp.id_api) AND  
@@ -72,6 +72,8 @@ def home():
          'accel': mpq.accel,
          'velocity': mpq.velocity,
          'peak_peak': mpq.peak_peak,
+         'dna12': mpq.dna12,
+         'dna500': mpq.dna500,
          'status': mpq.status,
          'last_update': mpq.updated_api
       })
@@ -92,7 +94,7 @@ def home2():
       item['asset_name'] = mp.name
       mp_data = []
       mp_query = db.engine.execute('''
-         SELECT a.id, a.name ||' '|| mp.name as nama ,accel ,velocity ,peak_peak ,updated_api ,
+         SELECT a.id, a.name ||' '|| mp.name as nama ,accel ,velocity ,peak_peak ,updated_api , dna12, dna500,
          CASE 
             WHEN 
                (SELECT max_warn FROM thresholds t WHERE title = 'acceleration' and measure_point_id_api = mp.id_api) and (SELECT max_alert FROM thresholds t WHERE title = 'acceleration' and measure_point_id_api = mp.id_api) AND  
