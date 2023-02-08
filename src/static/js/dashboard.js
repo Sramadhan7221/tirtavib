@@ -27,15 +27,15 @@ async function generateCard(data,area) {
       batch = 0;
    Object.values(data).forEach(function (o) {
       var nama = o.nama, accel = o.accel, velocity = o.velocity, peak_peak = o.peak_peak, status = o.status, dna12 = o.dna12, dna500 = o.dna500 , updated = new Date(o.last_update);
-      var content = `<p class="mb-0">Velocity : <b>${velocity.toPrecision(3)}</b> mm/s (RMS)</p>
+      var content = `<p class="mb-0"> Velocity : <b>${velocity.toPrecision(3)}</b> mm/s (RMS)</p>
                      <p class="mb-0"> Acceleration : <b>${accel.toPrecision(3)}</b> g (pk)</p>
-                     <p> Peak peak : <b>${peak_peak.toPrecision(3)}</b></p>`;
+                     <p class="mb-0"> Peak peak : <b>${peak_peak.toPrecision(3)}</b></p>`;
       if (dna12 > 0 || dna500 > 0) {
          content = `<p class="mb-0"> DNA12 g : <b>${dna12.toPrecision(3)}</b> pk-pk </p>
                      <p class="mb-0"> DNA500 g : <b>${accel.toPrecision(4)}</b> pk-pk </p>`;
       }
       switch (status) {
-         case "warning":
+         case "alert":
             status = WARNING;
             break;
          case "danger":
