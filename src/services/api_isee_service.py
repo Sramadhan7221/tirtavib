@@ -82,7 +82,7 @@ def sync():
 def sync_mp():
    asset_id = request.args.get('asset_id','')
    area = request.args.get('is_area')
-   MPS = db.session.execute(db.select(MeasurePoint.id_api, MeasurePoint.asset_id, MeasurePoint.accel, MeasurePoint.velocity,MeasurePoint.peak_peak, MeasurePoint.dna12, MeasurePoint.dna500, MeasurePoint.updated_api).order_by(MeasurePoint.asset_id)).all()
+   MPS = db.session.execute(db.select(MeasurePoint.id_api, MeasurePoint.asset_id, MeasurePoint.accel, MeasurePoint.velocity,MeasurePoint.peak_peak, MeasurePoint.dna12, MeasurePoint.dna500, MeasurePoint.temp, MeasurePoint.updated_api).order_by(MeasurePoint.asset_id)).all()
    
    if asset_id:
       MPS = MeasurePoint.query.filter_by(asset_id=asset_id, delete_at=None).order_by(MeasurePoint.asset_id).all()
@@ -91,7 +91,6 @@ def sync_mp():
 
    token = loginAPP()
    header = {'Authorization': 'Bearer {}'.format(token)}
-   mps_results = []
 
    for item in MPS:
       mpItem = MeasurePoint.query.filter_by(id_api=item.id_api).first()
@@ -115,22 +114,20 @@ def sync_mp():
                res['dna12'] = stat["value"]
             if stat["global_type"] == "dna500":
                res['dna500'] = stat["value"]
+            if stat["global_type"] == "temperature":
+               res['temp'] = stat["value"]
          if 'dna12' in res or 'dna500' in res:
             mpItem.dna12 = res["dna12"]
             mpItem.dna500 = res["dna500"]
          else:
+            if 'temp' in res:
+               mpItem.temp = res["temp"]
             mpItem.accel = res["accel"]
             mpItem.velocity = res["velocity"]
             mpItem.peak_peak = res["peak_peak"]
          db.session.commit()
          break
-      mps_results.append({
-         'id':item.id,
-         'velocity':item.velocity,
-         'accel':item.accel,
-         'peak_peak':item.peak_peak
-      })
-   return jsonify({'data':mps_results})
+   return jsonify({'success':True})
 
 def get_MP_byArea(area_id):
    assets = Asset.query.filter_by(area_id=area_id).all()
