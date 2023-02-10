@@ -6,6 +6,7 @@ $(document).ready(function () {
    let counter = 1;
    const area_id = [1,2,3,4,5];
    area_id.forEach(async (areaId) => await callAPI(areaId))
+
    setInterval(()=>{
       document.getElementById('radio'+counter).checked = true;
       counter++;
@@ -85,7 +86,7 @@ async function callAPI(areaId) {
          if (remains == 0 && index == batch)
             break;
             
-         const content = `<div class="slide">
+         const content = `<div class="slide ${area_name}">
                   <div class="content">
                      <!-- Navbar -->
                      <nav class=" navbar-expand navbar-white navbar-light layout-navbar-fixed ">
@@ -124,7 +125,7 @@ async function callAPI(areaId) {
          $("#container").append(content);
       }
 
-      $(".slide").first().addClass("first")
+      // $(".slide").first().addClass("first")
       await generateCard(data,area_name);
    });
 }

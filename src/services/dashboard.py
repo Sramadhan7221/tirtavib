@@ -8,10 +8,20 @@ dashboard = Blueprint("dashboard", __name__, url_prefix="/dashboard")
 def home():
    data = {}
    id_area = request.args.get('area',type=int)
-
+   status = request.args.get('status')
+   status_filter = ""
    if not id_area:
       id_area = 1
    
+   if status == "normal":
+      status_filter = "AND status = 'normal' "
+   elif status == "danger":
+      status_filter = "AND status = 'danger' "
+   elif status == "alert":
+      status_filter = "AND status = 'alert' "
+   else:
+      status_filter = ""
+      
    area_name = db.engine.execute('''SELECT name , 
 	(SELECT COUNT(mp.id) FROM measure_point mp JOIN asset a ON a.id = mp.asset_id WHERE a.area_id = ar.id) jumlah FROM area ar 
    WHERE ar.id = %d'''%id_area).first()   
@@ -68,10 +78,10 @@ def home():
          from measure_point mp 
          join asset a ON a.id = mp.asset_id
          join area ar ON ar.id = a.area_id
-         WHERE ar.id = %d 
-         ORDER BY status;'''%id_area
+         WHERE ar.id = %d %s
+         ORDER BY status;'''%(id_area,status_filter)
       ).all()
-
+   data['jumlah'] = len( mp_query)
    for mpq in mp_query:
       data['measure_points'].append({
          'nama' : mpq.nama,
