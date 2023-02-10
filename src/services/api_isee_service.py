@@ -32,7 +32,7 @@ def loginAPP():
 
 @isee.get("/syncronize-threshold")
 def sync():
-   area_id = request.args.get('area_id')
+   area_id = request.args.get('area_id', type=int)
    MPS = db.session.execute(db.select(MeasurePoint.id_api, MeasurePoint.asset_id).order_by(MeasurePoint.asset_id)).all()
    if area_id:
       MPS = db.engine.execute('''
@@ -44,12 +44,34 @@ def sync():
          '''%area_id).all()
    token = loginAPP()
    header = {'Authorization': 'Bearer {}'.format(token)}
-   mps_results = []
    for item in MPS:
       threshold_api = requests.get(f"https://isee.icareweb.com/apiv4/assets/{item.id_api}/thresholds",headers=header)
       result_api = threshold_api.json()
       result_fromAPI = result_api["dna"] if 'dna' in result_api else result_api["vibration"]
       results = []
+      if 'temperature' in result_api:
+         for item_res in result_api["temperature"]:
+            for item_res in result_fromAPI:
+               is_exist = Thresholds.query.filter_by(measure_point_id_api=item.id_api,title=item_res["threshold_type"]).first()
+               levels = item_res["levels"]
+               if is_exist:
+                  if levels:
+                     is_exist.max_alert = levels["maxalert"]
+                     is_exist.max_warn = levels["maxwarn"]
+                     db.session.commit()
+
+                  continue
+
+         new_threshold = Thresholds(title=item_res["threshold_type"],measure_point_id_api=item.id_api)
+
+         if levels:
+            new_threshold.max_alert = levels["maxalert"]
+            new_threshold.max_warn = levels["maxwarn"]
+
+         db.session.add(new_threshold)
+         db.session.commit()
+         results.append(item_res)
+         
       for item_res in result_fromAPI:
          is_exist = Thresholds.query.filter_by(measure_point_id_api=item.id_api,title=item_res["threshold_type"]).first()
          levels = item_res["levels"]
@@ -70,13 +92,8 @@ def sync():
          db.session.add(new_threshold)
          db.session.commit()
          results.append(item_res)
-      
-      mps_results.append({
-         'id': item.id_api,
-         'thresholds': results
-      })
 
-   return jsonify({'data':mps_results})
+   return jsonify({'Success':True})
 
 @isee.get("/syncronize-mp")
 def sync_mp():
