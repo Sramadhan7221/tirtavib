@@ -1,20 +1,22 @@
-const WARNING = "bg-warning";
-const NORMAL = "bg-success";
-const ERROR = "bg-danger";
+const WARNING = "warning";
+const NORMAL = "success";
+const ERROR = "danger";
 const btn = ``
+
+const areaName = []
 $(document).ready(function () {
    let counter = 1;
    const area_id = [1,2,3,4,5];
    area_id.forEach(async (areaId) => await callAPI(areaId))
-
    setInterval(()=>{
+      $('#area_name').html(areaName[counter-1])
       document.getElementById('radio'+counter).checked = true;
       counter++;
 
-      if(counter>18){
+      if(counter>13){
          counter = 1;
       }
-   },10000);
+   },3000);
 
    setInterval(() => {
       area_id.forEach((areaId) => callAPI(areaId))
@@ -54,8 +56,8 @@ async function generateCard(data,area) {
       }
 
       const card = `<div class="col-lg-2 col-6">
-                  <div class="small-box ${status}">
-                     <div class="inner">
+                  <div class="small-box ${status} opacity-25">
+                     <div class="inner opacity-125">
                         <h5>${nama}</h5>
                         ${content}
                      </div>
@@ -88,33 +90,7 @@ async function callAPI(areaId) {
             
          const content = `<div class="slide ${area_name}">
                   <div class="content">
-                     <!-- Navbar -->
-                     <nav class=" navbar-expand navbar-white navbar-light layout-navbar-fixed ">
-                     <!-- Left navbar links -->
-
-                     <!-- Right navbar links -->
-                     <ul class="navbar-nav">
-                        <li class="nav-item align-items-center ">
-                              <!-- Brand Logo -->
-                              <a href="" class="navbar-brand ml-4">
-                              <div id="image"></div>
-                              <img src="static/img/AGC.jpg" alt="AGC" class="brand-image rounded" style="opacity: .8"width="90" height="100%">
-                              </a>
-                        </li>
-                        <li class="nav-item mx-auto mt-2 align-items-center">
-                              <h2 class="bg-primary px-1 shadow rounded ms px-5 py-1">${area_name}</h2>
-                        </li>
-                        <li class="navbar-nav pr-3 align-items-center">
-                              <h5>Vibration Monitoring</h5>
-                        </li>
-                        <li class="nav-item align-items-center">
-                              <a class="nav-link mt-2" data-widget="fullscreen" href="#" role="button">
-                              <i class="fas fa-expand-arrows-alt"></i>
-                              </a>
-                        </li>
-                     </ul>
-                     </nav>
-                     <!-- /.navbar -->
+                     
                      <div class="m-4">
                         <div class="row" id="${area_name+index}">
                         </div> 
@@ -123,6 +99,7 @@ async function callAPI(areaId) {
             </div>`;   
          
          $("#container").append(content);
+         areaName.push(area_name) 
       }
 
       // $(".slide").first().addClass("first")
