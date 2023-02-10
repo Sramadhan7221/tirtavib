@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static',filename="css/slider.css") }}">
+    <link rel="stylesheet" href="{{ url_for('static',filename="css/card.css") }}">
     <link rel="icon" href="{{ url_for('static',filename="img/AGC.jpg") }}">
       <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -29,6 +30,40 @@
     <title>AGC Dashboard | AGC</title>
 </head>
 <body class="bg-light">
+    <!-- Navbar -->
+    <nav class=" navbar-expand navbar-white navbar-light layout-navbar-fixed ">
+        <!-- Left navbar links -->
+
+        <!-- Right navbar links -->
+        <ul class="navbar-nav">
+           <li class="nav-item align-items-center ">
+                 <!-- Brand Logo -->
+                 <a href="" class="navbar-brand ml-4">
+                 <div id="image"></div>
+                 <img src="static/img/AGC.jpg" alt="AGC" class="brand-image rounded" style="opacity: .8"width="90" height="100%">
+                 </a>
+           </li>
+           <li class="nav-item mx-auto mt-2 align-items-center">
+                 <h2 class="primary px-1 shadow rounded ms px-5 py-1" id="area_name"></h2>
+           </li>
+           <li class="navbar-nav pr-3 align-items-center">
+                 <h5>Vibration Monitoring</h5>
+           </li>
+           <li class="nav-item form-group">
+              <select name="" id="" class="form-control mt-2 rounded">
+                  <option value="green" >Green</option>
+                  <option value="yellow" >Yellow</option>
+                  <option value="red" >Red</option>
+              </select>
+           </li>
+           <li class="nav-item align-items-center">
+                 <a class="nav-link mt-2" data-widget="fullscreen" href="#" role="button">
+                 <i class="fas fa-expand-arrows-alt"></i>
+                 </a>
+           </li>
+        </ul>
+        </nav>
+        <!-- /.navbar -->
     <!-- Slider Start-->
     <div class="slider">
         <div class="slides" id="container">
