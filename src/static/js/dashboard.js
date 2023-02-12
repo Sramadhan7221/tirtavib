@@ -16,6 +16,7 @@ $(document).ready(function () {
       })
    }, 2000);
    
+   // Perform Slide
    setInterval(()=>{
       $('#area_name').html(areaName[counter-1])
       document.getElementById('radio'+counter).checked = true;
@@ -24,12 +25,13 @@ $(document).ready(function () {
       if(counter>last_slider){
          counter = 1;
       }
-   },3000);
+   },8000);
 
+   // reload page
    setInterval(() => {
-      area_id.forEach((areaId) => callAPI(areaId))
-   }, 7200000);
-
+      document.location.reload();
+   }, 4500000);
+   
    $("#status-filter").change(async function (e) {
       areaName = []
       last_slider = 0;
