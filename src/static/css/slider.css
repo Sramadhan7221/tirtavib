@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+
 body{
     margin: 0;
     padding: 0;
@@ -144,4 +146,8 @@ background: linear-gradient(152deg, rgba(167,9,49,0.8911939775910365) 0%, rgba(1
 .baris-dua {
     border: 3px solid #057DCD;
     margin-right: .3rem!important;
+}
+
+.mp-name {
+    font-family: 'Orbitron', sans-serif;
 }
