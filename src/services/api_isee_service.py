@@ -32,6 +32,7 @@ def loginAPP():
 
 # @isee.get("/syncronize-threshold")
 def sync(MPS):
+   print("Fetch Teshold data begins...")
    # area_id = request.args.get('area_id', type=int)
    # MPS = db.session.execute(db.select(MeasurePoint.id_api, MeasurePoint.asset_id).order_by(MeasurePoint.asset_id)).all()
    # if area_id:
@@ -105,6 +106,7 @@ def sync_mp(MPS):
    #    MPS = MeasurePoint.query.filter_by(asset_id=asset_id, delete_at=None).order_by(MeasurePoint.asset_id).all()
    # if asset_id and area:
    #    MPS = get_MP_byArea(asset_id)
+   print("Fetch MP data begins...")
 
    token = loginAPP()
    header = {'Authorization': 'Bearer {}'.format(token)}

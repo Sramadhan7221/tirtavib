@@ -50,6 +50,11 @@ async function generateCard(data,area,jml_mp) {
       <p class="mb-0"> Temperature : <b>${temp.toPrecision(3)}</b> <sup>o</sup>C</p>`;
       var warnaTxt = "";
       
+      if (temp == 0) {
+         content = `<p class="mb-0"> Velocity : <b>${velocity.toPrecision(3)}</b> mm/s (RMS)</p>
+            <p class="mb-0"> Temperature : <b>N/A</b></p>`;
+      }
+
       if (status != 2) {
          if (status == 0)
             warnaTxt = "text-white";
@@ -57,6 +62,12 @@ async function generateCard(data,area,jml_mp) {
          content = `<p class="mb-0 ${warnaTxt}"> Velocity : <b>${velocity.toPrecision(3)}</b> mm/s (RMS)</p>
                      <p class="mb-0 ${warnaTxt}"> Acceleration : <b>${accel.toPrecision(3)}</b> g (pk)</p>
                      <p class="mb-0 ${warnaTxt}"> Temperature : <b>${temp.toPrecision(3)}</b> <sup>o</sup>C </p>`;
+         
+         if (temp == 0) {
+            content = `<p class="mb-0 ${warnaTxt}"> Velocity : <b>${velocity.toPrecision(3)}</b> mm/s (RMS)</p>
+                     <p class="mb-0 ${warnaTxt}"> Acceleration : <b>${accel.toPrecision(3)}</b> g (pk)</p>
+                     <p class="mb-0 ${warnaTxt}"> Temperature : <b> N/A </b> </p>`;
+         }
       }
       
       if (dna12 > 0 || dna500 > 0) {

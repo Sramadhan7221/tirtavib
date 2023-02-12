@@ -42,7 +42,8 @@ def create_app(test_conifg=None):
             sync_mp(mp)
 
    scheduler = BackgroundScheduler()
-   scheduler.add_job(func=job,trigger="interval",seconds=3600)
+   # scheduler.add_job(func=job,trigger="interval",seconds=3600)
+   scheduler.add_job(func=job,trigger="interval",seconds=1800)
 # scheduler.add_job(func=job_syncMp,trigger="interval", seconds=1800)
 # scheduler.add_job(func=job_syncTreshshold,trigger="interval", seconds=1800)
    scheduler.start()
