@@ -8,10 +8,20 @@ dashboard = Blueprint("dashboard", __name__, url_prefix="/dashboard")
 def home():
    data = {}
    id_area = request.args.get('area',type=int)
-
+   status = request.args.get('status')
+   status_filter = ""
    if not id_area:
       id_area = 1
    
+   if status == "normal":
+      status_filter = "AND status = 2 "
+   elif status == "danger":
+      status_filter = "AND status = 0 "
+   elif status == "alert":
+      status_filter = "AND status = 1 "
+   else:
+      status_filter = ""
+      
    area_name = db.engine.execute('''SELECT name , 
 	(SELECT COUNT(mp.id) FROM measure_point mp JOIN asset a ON a.id = mp.asset_id WHERE a.area_id = ar.id) jumlah FROM area ar 
    WHERE ar.id = %d'''%id_area).first()   
@@ -19,59 +29,68 @@ def home():
    data['jumlah'] = area_name.jumlah
    data['measure_points'] = []
    mp_query = db.engine.execute('''
-         SELECT a.id, a.name ||' '|| mp.name as nama ,accel ,velocity ,peak_peak ,updated_api ,
+         SELECT a.id, a.name ||' '|| mp.name as nama ,accel ,velocity ,peak_peak ,updated_api , dna12, dna500,temp,
          CASE 
             WHEN 
                (SELECT max_warn FROM thresholds t WHERE title = 'acceleration' and measure_point_id_api = mp.id_api) and (SELECT max_alert FROM thresholds t WHERE title = 'acceleration' and measure_point_id_api = mp.id_api) AND  
                (SELECT max_warn FROM thresholds t WHERE title = 'velocity' and measure_point_id_api = mp.id_api) and (SELECT max_alert FROM thresholds t WHERE title = 'velocity' and measure_point_id_api = mp.id_api) AND 
                (SELECT max_warn FROM thresholds t WHERE title = 'peak-peak' and measure_point_id_api = mp.id_api) and (SELECT max_alert FROM thresholds t WHERE title = 'peak-peak' and measure_point_id_api = mp.id_api) and
                (SELECT max_alert FROM thresholds t WHERE title = 'dna12' and measure_point_id_api = mp.id_api) and 
-               (SELECT max_alert FROM thresholds t WHERE title = 'dna500' and measure_point_id_api = mp.id_api)
+               (SELECT max_alert FROM thresholds t WHERE title = 'dna500' and measure_point_id_api = mp.id_api) and 
+               (SELECT max_alert FROM thresholds t WHERE title = 'temperature' and measure_point_id_api = mp.id_api)
             ISNULL 
-            THEN 'normal'
+            THEN 2
             WHEN 
                mp.accel > (SELECT max_alert FROM thresholds t WHERE title = 'acceleration' and measure_point_id_api = mp.id_api) OR 
                mp.velocity  > (SELECT max_alert FROM thresholds t WHERE title = 'velocity' and measure_point_id_api = mp.id_api) OR 
                mp.peak_peak > (SELECT max_alert FROM thresholds t WHERE title = 'peak-peak' and measure_point_id_api = mp.id_api) OR
                mp.dna12 > (SELECT max_alert FROM thresholds t WHERE title = 'dna12' and measure_point_id_api = mp.id_api) OR
-               mp.dna500 > (SELECT max_alert FROM thresholds t WHERE title = 'dna500' and measure_point_id_api = mp.id_api)
-            THEN 'danger'
+               mp.dna500 > (SELECT max_alert FROM thresholds t WHERE title = 'dna500' and measure_point_id_api = mp.id_api) OR
+               mp.temp > (SELECT max_alert FROM thresholds t WHERE title = 'temperature' and measure_point_id_api = mp.id_api)
+            THEN 0
             WHEN 
                mp.accel = (SELECT max_alert FROM thresholds t WHERE title = 'acceleration' and measure_point_id_api = mp.id_api) OR 
                mp.velocity  = (SELECT max_alert FROM thresholds t WHERE title = 'velocity' and measure_point_id_api = mp.id_api) OR 
                mp.peak_peak = (SELECT max_alert FROM thresholds t WHERE title = 'peak-peak' and measure_point_id_api = mp.id_api) OR
                mp.dna12 = (SELECT max_alert FROM thresholds t WHERE title = 'dna12' and measure_point_id_api = mp.id_api) OR
-               mp.dna500 = (SELECT max_alert FROM thresholds t WHERE title = 'dna500' and measure_point_id_api = mp.id_api)
-            THEN 'danger'
+               mp.dna500 = (SELECT max_alert FROM thresholds t WHERE title = 'dna500' and measure_point_id_api = mp.id_api) OR 
+               mp.temp = (SELECT max_alert FROM thresholds t WHERE title = 'temperature' and measure_point_id_api = mp.id_api)
+            THEN 0
             WHEN 
                mp.accel > (SELECT max_warn FROM thresholds t WHERE title = 'acceleration' and measure_point_id_api = mp.id_api) OR 
                mp.velocity  > (SELECT max_warn FROM thresholds t WHERE title = 'velocity' and measure_point_id_api = mp.id_api) OR 
                mp.peak_peak > (SELECT max_warn FROM thresholds t WHERE title = 'peak-peak' and measure_point_id_api = mp.id_api) OR
                mp.dna12 > (SELECT max_warn FROM thresholds t WHERE title = 'dna12' and measure_point_id_api = mp.id_api) OR 
-               mp.dna500 > (SELECT max_warn FROM thresholds t WHERE title = 'dna500' and measure_point_id_api = mp.id_api)
-            THEN 'warning'
+               mp.dna500 > (SELECT max_warn FROM thresholds t WHERE title = 'dna500' and measure_point_id_api = mp.id_api) OR
+               mp.temp > (SELECT max_warn FROM thresholds t WHERE title = 'temperature' and measure_point_id_api = mp.id_api)
+            THEN 1
             WHEN 
                mp.accel = (SELECT max_warn FROM thresholds t WHERE title = 'acceleration' and measure_point_id_api = mp.id_api) OR 
                mp.velocity  = (SELECT max_warn FROM thresholds t WHERE title = 'velocity' and measure_point_id_api = mp.id_api) OR 
                mp.peak_peak = (SELECT max_warn FROM thresholds t WHERE title = 'peak-peak' and measure_point_id_api = mp.id_api) OR
                mp.dna12 = (SELECT max_warn FROM thresholds t WHERE title = 'dna12' and measure_point_id_api = mp.id_api) OR 
-               mp.dna500 = (SELECT max_warn FROM thresholds t WHERE title = 'dna500' and measure_point_id_api = mp.id_api)
-            THEN 'warning'
-            ELSE 'normal'
+               mp.dna500 = (SELECT max_warn FROM thresholds t WHERE title = 'dna500' and measure_point_id_api = mp.id_api) OR
+               mp.temp = (SELECT max_warn FROM thresholds t WHERE title = 'temperature' and measure_point_id_api = mp.id_api)
+            THEN 1
+            ELSE 2
          END
          as status
          from measure_point mp 
          join asset a ON a.id = mp.asset_id
          join area ar ON ar.id = a.area_id
-         WHERE ar.id = %d;'''%id_area
+         WHERE ar.id = %d %s
+         ORDER BY status;'''%(id_area,status_filter)
       ).all()
-
+   data['jumlah'] = len( mp_query)
    for mpq in mp_query:
       data['measure_points'].append({
          'nama' : mpq.nama,
          'accel': mpq.accel,
          'velocity': mpq.velocity,
          'peak_peak': mpq.peak_peak,
+         'temp': mpq.temp,
+         'dna12': mpq.dna12,
+         'dna500': mpq.dna500,
          'status': mpq.status,
          'last_update': mpq.updated_api
       })
@@ -92,7 +111,7 @@ def home2():
       item['asset_name'] = mp.name
       mp_data = []
       mp_query = db.engine.execute('''
-         SELECT a.id, a.name ||' '|| mp.name as nama ,accel ,velocity ,peak_peak ,updated_api ,
+         SELECT a.id, a.name ||' '|| mp.name as nama ,accel ,velocity ,peak_peak ,updated_api , dna12, dna500,
          CASE 
             WHEN 
                (SELECT max_warn FROM thresholds t WHERE title = 'acceleration' and measure_point_id_api = mp.id_api) and (SELECT max_alert FROM thresholds t WHERE title = 'acceleration' and measure_point_id_api = mp.id_api) AND  
@@ -122,14 +141,14 @@ def home2():
                mp.peak_peak > (SELECT max_warn FROM thresholds t WHERE title = 'peak-peak' and measure_point_id_api = mp.id_api) OR
                mp.dna12 > (SELECT max_warn FROM thresholds t WHERE title = 'dna12' and measure_point_id_api = mp.id_api) OR 
                mp.dna500 > (SELECT max_warn FROM thresholds t WHERE title = 'dna500' and measure_point_id_api = mp.id_api)
-            THEN 'warning'
+            THEN 'alert'
             WHEN 
                mp.accel = (SELECT max_warn FROM thresholds t WHERE title = 'acceleration' and measure_point_id_api = mp.id_api) OR 
                mp.velocity  = (SELECT max_warn FROM thresholds t WHERE title = 'velocity' and measure_point_id_api = mp.id_api) OR 
                mp.peak_peak = (SELECT max_warn FROM thresholds t WHERE title = 'peak-peak' and measure_point_id_api = mp.id_api) OR
                mp.dna12 = (SELECT max_warn FROM thresholds t WHERE title = 'dna12' and measure_point_id_api = mp.id_api) OR 
                mp.dna500 = (SELECT max_warn FROM thresholds t WHERE title = 'dna500' and measure_point_id_api = mp.id_api)
-            THEN 'warning'
+            THEN 'alert'
             ELSE 'normal'
          END
          as status

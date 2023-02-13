@@ -1,38 +1,76 @@
-const WARNING = "bg-warning";
-const NORMAL = "bg-success";
-const ERROR = "bg-danger";
+const WARNING = "warning";
+const NORMAL = "success";
+const ERROR = "danger";
 const btn = ``
+
+var areaName = []
+let last_slider = 0;
 $(document).ready(function () {
    let counter = 1;
    const area_id = [1,2,3,4,5];
-   area_id.forEach(async (areaId) => await callAPI(areaId))
+
+   setTimeout(() => {
+      area_id.forEach(async (areaId) => {
+         await callAPI(areaId)
+         $(".ring").addClass("d-none")
+      })
+   }, 2000);
+   
+   // Perform Slide
    setInterval(()=>{
+      $('#area_name').html(areaName[counter-1])
       document.getElementById('radio'+counter).checked = true;
       counter++;
 
-      if(counter>18){
+      if(counter>last_slider){
          counter = 1;
       }
-   },10000);
+   },8000);
 
+   // reload page
    setInterval(() => {
-      area_id.forEach((areaId) => callAPI(areaId))
-   }, 7200000);
-
+      document.location.reload();
+   }, 4500000);
+   
+   $("#status-filter").change(async function (e) {
+      areaName = []
+      last_slider = 0;
+      $(".ring").removeClass("d-none")
+      await callAPIwithFilter($(this).val())
+      counter = 1;
+   })
 })
 
-async function generateCard(data,area) {
-   var result = "";
+async function generateCard(data,area,jml_mp) {
    let counter = 0,
       batch = 0;
    Object.values(data).forEach(function (o) {
-      var nama = o.nama, accel = o.accel, velocity = o.velocity, peak_peak = o.peak_peak, status = o.status, updated = new Date(o.last_update);
+      var nama = o.nama, accel = o.accel, velocity = o.velocity, temp = o.temp, status = o.status, dna12 = o.dna12, dna500 = o.dna500 , updated = new Date(o.last_update);
+      var content = `<p class="mb-0"> Velocity : <b>${velocity.toPrecision(3)}</b> mm/s (RMS)</p>
+      <p class="mb-0"> Temperature : <b>${temp.toPrecision(3)}</b> <sup>o</sup>C</p>`;
+      var warnaTxt = "";
       
+      if (status != 2) {
+         if (status == 0)
+            warnaTxt = "text-white";
+
+         content = `<p class="mb-0 ${warnaTxt}"> Velocity : <b>${velocity.toPrecision(3)}</b> mm/s (RMS)</p>
+                     <p class="mb-0 ${warnaTxt}"> Acceleration : <b>${accel.toPrecision(3)}</b> g (pk)</p>
+                     <p class="mb-0 ${warnaTxt}"> Temperature : <b>${temp.toPrecision(3)}</b> <sup>o</sup>C </p>`;
+      }
+      
+      if (dna12 > 0 || dna500 > 0) {
+         if (status == 0)
+            warnaTxt = "text-white";
+            
+         content = `<p class="mb-0 ${warnaTxt}"> DNA12 g : <b>${dna12.toPrecision(3)}</b> pk-pk </p>
+                     <p class="mb-0 ${warnaTxt}"> DNA500 g : <b>${accel.toPrecision(4)}</b> pk-pk </p>`;
+      }
       switch (status) {
-         case "warning":
+         case 1:
             status = WARNING;
             break;
-         case "danger":
+         case 0:
             status = ERROR;
             break;
          default:
@@ -41,26 +79,28 @@ async function generateCard(data,area) {
       }
 
       const card = `<div class="col-lg-2 col-6">
-                  <div class="small-box ${status}">
-                     <div class="inner">
-                     <h5>${nama}</h5>
-                     <p class="mb-0">Velocity : <b>${Math.ceil(velocity)}</b> mm/s (RMS)</p>
-                     <p class="mb-0"> Acceleration : <b>${Math.ceil(accel)}</b> g (pk)</p>
-                     <p> Peak peak : <b>${Math.ceil(peak_peak)}</b></p>
+                  <div class="small-box ${status} opacity-25">
+                     <div class="inner opacity-125">
+                        <h5 class="${warnaTxt}" >${nama}</h5>
+                        ${content}
                      </div>
-                     <span  class="small-box-footer">Last update: ${updated.toLocaleDateString('en-GB')} ${updated.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}</span>
+                     <div  class="small-box-footer">Update: ${updated.toLocaleDateString('en-GB')} ${updated.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}</div>
                   </div>
                </div>`;
-      result += card;
       counter++;
 
       if (counter == 15) {
          counter -= counter;
-         $(`#${area+batch}`).append(result);
-         result = ""
          batch++;
       }
+
+      $(`#${area+batch}`).append(card);
    })
+}
+
+function generateButton(nomer) {
+   $("#container").append(`<input type="radio" name="radio-btn" id="radio${nomer}">`);
+   $(".navigation-auto").append(`<div class="auto-btn${nomer}"></div>`)
 }
 
 async function callAPI(areaId) {
@@ -71,39 +111,13 @@ async function callAPI(areaId) {
          remains = jml_mp % 15,
          data = o.data.measure_points;
 
-      for (let index = 0; index <= batch; index++) {
+      for (let index = 0; index < batch; index++) {
          if (remains == 0 && index == batch)
             break;
             
-         const content = `<div class="slide">
+         const content = `<div class="slide ${area_name}">
                   <div class="content">
-                     <!-- Navbar -->
-                     <nav class=" navbar-expand navbar-white navbar-light layout-navbar-fixed ">
-                     <!-- Left navbar links -->
-
-                     <!-- Right navbar links -->
-                     <ul class="navbar-nav">
-                        <li class="nav-item align-items-center ">
-                              <!-- Brand Logo -->
-                              <a href="" class="navbar-brand ml-4">
-                              <div id="image"></div>
-                              <img src="static/img/AGC.jpg" alt="AGC" class="brand-image rounded" style="opacity: .8"width="90" height="100%">
-                              </a>
-                        </li>
-                        <li class="nav-item mx-auto mt-2 align-items-center">
-                              <h2 class="bg-primary px-1 shadow rounded ms px-5 py-1">${area_name}</h2>
-                        </li>
-                        <li class="navbar-nav pr-3 align-items-center">
-                              <h5>Vibration Monitoring</h5>
-                        </li>
-                        <li class="nav-item align-items-center">
-                              <a class="nav-link mt-2" data-widget="fullscreen" href="#" role="button">
-                              <i class="fas fa-expand-arrows-alt"></i>
-                              </a>
-                        </li>
-                     </ul>
-                     </nav>
-                     <!-- /.navbar -->
+                     
                      <div class="m-4">
                         <div class="row" id="${area_name+index}">
                         </div> 
@@ -112,9 +126,91 @@ async function callAPI(areaId) {
             </div>`;   
          
          $("#container").append(content);
+         areaName.push(area_name) 
       }
-
+      
+      last_slider += batch
       $(".slide").first().addClass("first")
-      await generateCard(data,area_name);
+      await generateCard(data,area_name,jml_mp);
    });
+}
+
+async function callAPIwithFilter(filter) {
+   let firstContent = `
+            <!-- Radio Button Start-->
+            <input type="radio" name="radio-btn" id="radio1">
+            <input type="radio" name="radio-btn" id="radio2">
+            <input type="radio" name="radio-btn" id="radio3">
+            <input type="radio" name="radio-btn" id="radio4">
+            <input type="radio" name="radio-btn" id="radio5">
+            <input type="radio" name="radio-btn" id="radio6">
+            <input type="radio" name="radio-btn" id="radio7">
+            <input type="radio" name="radio-btn" id="radio8">
+            <input type="radio" name="radio-btn" id="radio9">
+            <input type="radio" name="radio-btn" id="radio10">
+            <input type="radio" name="radio-btn" id="radio11">
+            <input type="radio" name="radio-btn" id="radio12">
+            <input type="radio" name="radio-btn" id="radio13">
+            <input type="radio" name="radio-btn" id="radio14">
+            <input type="radio" name="radio-btn" id="radio15">
+            <input type="radio" name="radio-btn" id="radio16">
+            <input type="radio" name="radio-btn" id="radio17">
+            <input type="radio" name="radio-btn" id="radio18">
+            <!-- Radio Button End-->
+            
+            <!-- Automatic Navigation Start-->
+            <div class="navigation-auto">
+               <div class="auto-btn1"></div>
+               <div class="auto-btn2"></div>
+               <div class="auto-btn3"></div>
+               <div class="auto-btn4"></div>
+               <div class="auto-btn5"></div>
+               <div class="auto-btn6"></div>
+               <div class="auto-btn7"></div>
+               <div class="auto-btn8"></div>
+               <div class="auto-btn9"></div>
+               <div class="auto-btn10"></div>
+               <div class="auto-btn11"></div>
+               <div class="auto-btn12"></div>
+               <div class="auto-btn13"></div>
+               <div class="auto-btn14"></div>
+               <div class="auto-btn15"></div>
+               <div class="auto-btn16"></div>
+               <div class="auto-btn17"></div>
+               <div class="auto-btn18"></div>
+            </div>
+            <!-- Automatic Navigation End-->`;
+   $("#container").html(firstContent);
+   const areasId = [1,2,3,4,5]
+   areasId.forEach((id) => {
+      $.get("/dashboard/v1?area=" + id + "&status=" + filter, async function (o) {
+         var area_name = o.data.area_name, jml_mp = o.data.jumlah,
+            batch = jml_mp > 15 ? Math.floor(jml_mp / 15) : 1,
+            remains = jml_mp % 15, 
+            data = o.data.measure_points;
+
+         for (let index = 0; index < batch; index++) {
+            if (remains == 0 && index == batch)
+               break;
+
+            const content = `<div class="slide ${area_name}">
+                     <div class="content">
+                        
+                        <div class="m-4">
+                           <div class="row" id="${area_name + index}">
+                           </div> 
+                        </div>
+                     </div>
+               </div>`;
+
+            $("#container").append(content);
+            areaName.push(area_name);
+         }
+         
+         last_slider += batch
+         $(".slide").first().addClass("first");
+         await generateCard(data, area_name, jml_mp);
+      });
+      $(".ring").addClass("d-none")
+   })
 }

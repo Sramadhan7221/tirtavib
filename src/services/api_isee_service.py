@@ -30,28 +30,49 @@ def loginAPP():
 
    return db_token["token"]
 
-@isee.get("/syncronize-threshold")
-def sync(param1=None):
-   area_id = request.args.get('area_id',type=int)
-   if param1:
-      area_id = param1
-   MPS = db.session.execute(db.select(MeasurePoint.id_api, MeasurePoint.asset_id).order_by(MeasurePoint.asset_id)).all()
-   if area_id:
-      MPS = db.engine.execute('''
-         SELECT mp.id_api , mp.asset_id  FROM measure_point mp 
-         INNER JOIN asset a ON a.id = mp.asset_id 
-         INNER JOIN area a2 ON a2.id = a.area_id 
-         WHERE a2.id = %d
-         ORDER BY mp.asset_id;
-         '''%area_id).all()
+# @isee.get("/syncronize-threshold")
+def sync(MPS):
+   # area_id = request.args.get('area_id', type=int)
+   # MPS = db.session.execute(db.select(MeasurePoint.id_api, MeasurePoint.asset_id).order_by(MeasurePoint.asset_id)).all()
+   # if area_id:
+   #    MPS = db.engine.execute('''
+   #       SELECT mp.id_api , mp.asset_id  FROM measure_point mp 
+   #       INNER JOIN asset a ON a.id = mp.asset_id 
+   #       INNER JOIN area a2 ON a2.id = a.area_id 
+   #       WHERE a2.id = %d
+   #       ORDER BY mp.asset_id;
+   #       '''%area_id).all()
    token = loginAPP()
    header = {'Authorization': 'Bearer {}'.format(token)}
-   mps_results = []
    for item in MPS:
       threshold_api = requests.get(f"https://isee.icareweb.com/apiv4/assets/{item.id_api}/thresholds",headers=header)
       result_api = threshold_api.json()
+      result_fromAPI = result_api["dna"] if 'dna' in result_api else result_api["vibration"]
       results = []
-      for item_res in result_api["vibration"]:
+      if 'temperature' in result_api:
+         for item_res in result_api["temperature"]:
+            for item_res in result_fromAPI:
+               is_exist = Thresholds.query.filter_by(measure_point_id_api=item.id_api,title=item_res["threshold_type"]).first()
+               levels = item_res["levels"]
+               if is_exist:
+                  if levels:
+                     is_exist.max_alert = levels["maxalert"]
+                     is_exist.max_warn = levels["maxwarn"]
+                     db.session.commit()
+
+                  continue
+
+         new_threshold = Thresholds(title=item_res["threshold_type"],measure_point_id_api=item.id_api)
+
+         if levels:
+            new_threshold.max_alert = levels["maxalert"]
+            new_threshold.max_warn = levels["maxwarn"]
+
+         db.session.add(new_threshold)
+         db.session.commit()
+         results.append(item_res)
+         
+      for item_res in result_fromAPI:
          is_exist = Thresholds.query.filter_by(measure_point_id_api=item.id_api,title=item_res["threshold_type"]).first()
          levels = item_res["levels"]
          if is_exist:
@@ -71,31 +92,22 @@ def sync(param1=None):
          db.session.add(new_threshold)
          db.session.commit()
          results.append(item_res)
-      
-      mps_results.append({
-         'id': item.id_api,
-         'thresholds': results
-      })
+   print("Success Fetch tresholds data")
+   return jsonify({'Success':True})
 
-   return jsonify({'data':mps_results})
-
-@isee.get("/syncronize-mp")
-def sync_mp(param1=None,param2=None):
-   asset_id = request.args.get('asset_id','')
-   area = request.args.get('is_area')
-   if param1 and param2:
-      asset_id = param1,
-      area = param2
-   MPS = db.session.execute(db.select(MeasurePoint.id_api, MeasurePoint.asset_id, MeasurePoint.accel, MeasurePoint.velocity,MeasurePoint.peak_peak, MeasurePoint.dna12, MeasurePoint.dna500, MeasurePoint.updated_api).order_by(MeasurePoint.asset_id)).all()
+# @isee.get("/syncronize-mp")
+def sync_mp(MPS):
+   # asset_id = request.args.get('asset_id','')
+   # area = request.args.get('is_area')
+   # MPS = db.session.execute(db.select(MeasurePoint.id_api, MeasurePoint.asset_id, MeasurePoint.accel, MeasurePoint.velocity,MeasurePoint.peak_peak, MeasurePoint.dna12, MeasurePoint.dna500, MeasurePoint.temp, MeasurePoint.updated_api).order_by(MeasurePoint.asset_id)).all()
    
-   if asset_id:
-      MPS = MeasurePoint.query.filter_by(asset_id=asset_id, delete_at=None).order_by(MeasurePoint.asset_id).all()
-   if asset_id and area:
-      MPS = get_MP_byArea(asset_id)
+   # if asset_id:
+   #    MPS = MeasurePoint.query.filter_by(asset_id=asset_id, delete_at=None).order_by(MeasurePoint.asset_id).all()
+   # if asset_id and area:
+   #    MPS = get_MP_byArea(asset_id)
 
    token = loginAPP()
    header = {'Authorization': 'Bearer {}'.format(token)}
-   mps_results = []
 
    for item in MPS:
       mpItem = MeasurePoint.query.filter_by(id_api=item.id_api).first()
@@ -119,22 +131,21 @@ def sync_mp(param1=None,param2=None):
                res['dna12'] = stat["value"]
             if stat["global_type"] == "dna500":
                res['dna500'] = stat["value"]
+            if stat["global_type"] == "temperature":
+               res['temp'] = stat["value"]
          if 'dna12' in res or 'dna500' in res:
             mpItem.dna12 = res["dna12"]
             mpItem.dna500 = res["dna500"]
          else:
+            if 'temp' in res:
+               mpItem.temp = res["temp"]
             mpItem.accel = res["accel"]
             mpItem.velocity = res["velocity"]
             mpItem.peak_peak = res["peak_peak"]
          db.session.commit()
          break
-      mps_results.append({
-         'id':item.id,
-         'velocity':item.velocity,
-         'accel':item.accel,
-         'peak_peak':item.peak_peak
-      })
-   return jsonify({'data':mps_results})
+   print("Success Fetch MP data")
+   return jsonify({'success':True})
 
 def get_MP_byArea(area_id):
    assets = Asset.query.filter_by(area_id=area_id).all()
@@ -144,7 +155,7 @@ def get_MP_byArea(area_id):
       mps = MeasurePoint.query.filter_by(asset_id=item.id,delete_at= None).all()
       for mp in mps:
          MPS.append(mp)
-
+   print("success")
    return MPS
 
 async def job_syncMp():

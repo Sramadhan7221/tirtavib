@@ -54,6 +54,7 @@ class MeasurePoint(db.Model):
    accel = db.Column(db.Float, nullable=False, default=0)
    velocity = db.Column(db.Float, nullable=False, default=0)
    peak_peak = db.Column(db.Float, nullable=False, default=0)
+   temp = db.Column(db.Float, nullable=False, default=0)
    dna12 = db.Column(db.Float, nullable=False, default=0)
    dna500 = db.Column(db.Float, nullable= False, default=0)
    create_at = db.Column(db.DateTime(), default=datetime.now())
