@@ -5,7 +5,7 @@ from src.services.area import area
 from src.services.assets import assets
 from src.services.auth import auth
 from src.services.measure_point import measure_point
-from src.services.api_isee_service import isee,sync_mp
+from src.services.api_isee_service import isee,sync_mp,sync
 from src.services.dashboard import dashboard
 from flask_jwt_extended import JWTManager
 from src.constants.http_constants import HTTP_200_OK,HTTP_404_NOT_FOUND, HTTP_500_INTERNAL_SERVER_ERROR
@@ -38,14 +38,12 @@ def create_app(test_conifg=None):
    def job(app=app):
       with app.app_context():
          mp = MeasurePoint.query.filter_by(delete_at= None).order_by(MeasurePoint.asset_id).all()
-         for item in mp:
-            sync_mp(mp)
+         # for item in mp:
+         sync_mp(mp)
+         sync(mp)
 
    scheduler = BackgroundScheduler()
-   # scheduler.add_job(func=job,trigger="interval",seconds=3600)
    scheduler.add_job(func=job,trigger="interval",seconds=1800)
-# scheduler.add_job(func=job_syncMp,trigger="interval", seconds=1800)
-# scheduler.add_job(func=job_syncTreshshold,trigger="interval", seconds=1800)
    scheduler.start()
 
 # # Shut down the scheduler when exiting the app

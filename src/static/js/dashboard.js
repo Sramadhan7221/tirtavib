@@ -25,7 +25,7 @@ $(document).ready(function () {
       if(counter>last_slider){
          counter = 1;
       }
-   },8000);
+   },13000);
 
    // reload page
    setInterval(() => {
@@ -95,7 +95,7 @@ async function generateCard(data,area,jml_mp) {
                         <h5 class="${warnaTxt}" >${nama}</h5>
                         ${content}
                      </div>
-                     <div  class="small-box-footer">Update: ${updated.toLocaleDateString('en-GB')} ${updated.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}</div>
+                     <div  class="small-box-footer">${updated.toLocaleDateString('en-GB')} ${updated.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}</div>
                   </div>
                </div>`;
       counter++;
