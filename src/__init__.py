@@ -59,7 +59,7 @@ def create_app(test_conifg=None):
    @app.route("/dashboard")
    def home():
       return render_template('dashboard_v1.html')
-      
+
    @app.errorhandler(HTTP_404_NOT_FOUND)
    def handle_404(e):
       return jsonify({'error': 'Not Found'}), HTTP_404_NOT_FOUND
