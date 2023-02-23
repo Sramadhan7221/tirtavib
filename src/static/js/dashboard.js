@@ -89,13 +89,17 @@ async function generateCard(data,area,jml_mp) {
             break;
       }
 
+
+
       const card = `<div class="col-lg-2 col-6">
                   <div class="small-box ${status} opacity-25">
                      <div class="inner opacity-125">
-                        <h5 class="${warnaTxt}" >${nama}</h5>
+                        <h5 class="${warnaTxt} font-weight-bold" >${nama}</h5>
                         ${content}
                      </div>
-                     <div  class="small-box-footer">${updated.toLocaleDateString('en-GB')} ${updated.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}</div>
+                     <div  class="small-box-footer">${updated.toLocaleString('en-GB', {
+                        hour12: false,
+                      })}</div>
                   </div>
                </div>`;
       counter++;
