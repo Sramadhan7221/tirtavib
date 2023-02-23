@@ -4,7 +4,7 @@ const ERROR = "danger";
 const btn = ``
 
 var areaName = []
-let last_slider = 0;
+let last_slider = 0, toggle = false;
 $(document).ready(function () {
    let counter = 1;
    const area_id = [1,2,3,4,5];
@@ -16,6 +16,8 @@ $(document).ready(function () {
       })
    }, 2000);
    
+
+  
    // Perform Slide
    setInterval(()=>{
       $('#area_name').html(areaName[counter-1])
@@ -225,3 +227,9 @@ async function callAPIwithFilter(filter) {
       $(".ring").addClass("d-none")
    })
 }
+
+$('.toggle').click(function(e){
+   e.preventDefault();
+   $(this).toggleClass('toggle-on');
+   
+ });
