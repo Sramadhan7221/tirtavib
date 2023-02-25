@@ -15,7 +15,7 @@ import atexit
 
 def create_app(test_conifg=None):
    app = Flask(__name__, instance_relative_config=True,template_folder='templates')
-
+   basedir = os.path.abspath(os.path.dirname(__file__))
    if test_conifg is None:
       app.config.from_mapping(
          SECRET_KEY = os.environ.get("SECRET_KEY"),
@@ -24,6 +24,7 @@ def create_app(test_conifg=None):
    else:
       app.config.from_mapping(test_conifg)
 
+   print(basedir)
    db.app=app
    db.init_app(app)
    JWTManager(app)
