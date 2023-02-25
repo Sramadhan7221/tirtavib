@@ -45,12 +45,15 @@
                  </a>
                  
            </li>
-           <li><p> Maintenance Division <br> MRT Departement</p></li>
+           <li class="mt-4"><p> Maintenance Division <br> MRT Departement</p></li>
            <li class="nav-item mx-auto mt-2 align-items-center">
                 <h2 class="px-5 py-1 mt-3 ms mp-name" id="area_name"></h2>
            </li>
            <li class="navbar-nav pr-3 align-items-center">
                  <h5 class="mt-3">Online Vibration Monitoring</h5>
+           </li>
+           <li class="mt-4">
+           
            </li>
            <li class="nav-item form-group mt-3">
               <select id="status-filter" class="form-control mt-3 rounded">
@@ -93,11 +96,6 @@
             <input type="radio" name="radio-btn" id="radio11">
             <input type="radio" name="radio-btn" id="radio12">
             <input type="radio" name="radio-btn" id="radio13">
-            <input type="radio" name="radio-btn" id="radio14">
-            <input type="radio" name="radio-btn" id="radio15">
-            <input type="radio" name="radio-btn" id="radio16">
-            <input type="radio" name="radio-btn" id="radio17">
-            <input type="radio" name="radio-btn" id="radio18">
             <!-- Radio Button End-->
             
             <!-- Automatic Navigation Start-->
@@ -115,17 +113,36 @@
                 <div class="auto-btn11"></div>
                 <div class="auto-btn12"></div>
                 <div class="auto-btn13"></div>
-                <div class="auto-btn14"></div>
-                <div class="auto-btn15"></div>
-                <div class="auto-btn16"></div>
-                <div class="auto-btn17"></div>
-                <div class="auto-btn18"></div>
             </div>
             <!-- Automatic Navigation End-->
 
         </div>
+         <!-- Manual Navigation Start-->
+         <div class="navigation-manual">
+            <label for="radio1" class="manual-btn"></label>
+            <label for="radio2" class="manual-btn"></label>
+            <label for="radio3" class="manual-btn"></label>
+            <label for="radio4" class="manual-btn"></label>
+            <label for="radio5" class="manual-btn"></label>
+            <label for="radio6" class="manual-btn"></label>
+            <label for="radio7" class="manual-btn"></label>
+            <label for="radio8" class="manual-btn"></label>
+            <label for="radio9" class="manual-btn"></label>
+            <label for="radio10" class="manual-btn"></label>
+            <label for="radio11" class="manual-btn"></label>
+            <label for="radio12" class="manual-btn"></label>
+            <label for="radio13" class="manual-btn"></label>
+
+        </div>
+        <!-- Manual Navigation End-->
     </div>
     <!-- Slider End-->
+    <div class='toggle' id='switch'>
+		<div class='toggle-text-off'>OFF</div>
+		<div class='glow-comp'></div>
+		<div class='toggle-button'></div>
+		<div class='toggle-text-on'>ON</div>
+</div>
     <!-- jQuery -->
     <script src="{{ url_for('static', filename="plugin/jquery/jquery.min.js") }}"></script>
     <!-- jQuery UI 1.11.4 -->

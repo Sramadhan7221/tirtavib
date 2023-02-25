@@ -4,7 +4,7 @@ const ERROR = "danger";
 const btn = ``
 
 var areaName = []
-let last_slider = 0;
+let last_slider = 0, toggle = 0;
 $(document).ready(function () {
    let counter = 1;
    const area_id = [1,2,3,4,5];
@@ -16,16 +16,42 @@ $(document).ready(function () {
       })
    }, 2000);
    
-   // Perform Slide
-   setInterval(()=>{
+
+   $('.toggle').click(function(e){
+      e.preventDefault();
+      $(this).toggleClass('toggle-on');
+      var slide;
+      toggle++;
+      
+    //even odd click detect 
+    var isEven = function(someNumber) {
+        return (someNumber % 2 === 0) ? true : false;
+    };
+    
+       // Perform Slide
+   function slideStart(){      
+       slide =  setInterval(()=>{
       $('#area_name').html(areaName[counter-1])
       document.getElementById('radio'+counter).checked = true;
-      counter++;
 
+
+         // on odd clicks do this
+    if (isEven(toggle) === false) {
+      counter++;
+     } else if(isEven(toggle) === true) {
+      clearInterval(slide)
+    } 
+      
       if(counter>last_slider){
          counter = 1;
       }
-   },13000);
+   },3000);
+}
+
+slideStart()
+   
+    });
+  
 
    // reload page
    setInterval(() => {
@@ -89,13 +115,17 @@ async function generateCard(data,area,jml_mp) {
             break;
       }
 
+
+
       const card = `<div class="col-lg-2 col-6">
                   <div class="small-box ${status} opacity-25">
                      <div class="inner opacity-125">
-                        <h5 class="${warnaTxt}" >${nama}</h5>
+                        <h5 class="${warnaTxt} font-weight-bold" >${nama}</h5>
                         ${content}
                      </div>
-                     <div  class="small-box-footer">${updated.toLocaleDateString('en-GB')} ${updated.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}</div>
+                     <div  class="small-box-footer">${updated.toLocaleString('en-GB', {
+                        hour12: false,
+                      })}</div>
                   </div>
                </div>`;
       counter++;
@@ -162,11 +192,6 @@ async function callAPIwithFilter(filter) {
             <input type="radio" name="radio-btn" id="radio11">
             <input type="radio" name="radio-btn" id="radio12">
             <input type="radio" name="radio-btn" id="radio13">
-            <input type="radio" name="radio-btn" id="radio14">
-            <input type="radio" name="radio-btn" id="radio15">
-            <input type="radio" name="radio-btn" id="radio16">
-            <input type="radio" name="radio-btn" id="radio17">
-            <input type="radio" name="radio-btn" id="radio18">
             <!-- Radio Button End-->
             
             <!-- Automatic Navigation Start-->
@@ -184,11 +209,7 @@ async function callAPIwithFilter(filter) {
                <div class="auto-btn11"></div>
                <div class="auto-btn12"></div>
                <div class="auto-btn13"></div>
-               <div class="auto-btn14"></div>
-               <div class="auto-btn15"></div>
-               <div class="auto-btn16"></div>
-               <div class="auto-btn17"></div>
-               <div class="auto-btn18"></div>
+
             </div>
             <!-- Automatic Navigation End-->`;
    $("#container").html(firstContent);
@@ -225,3 +246,4 @@ async function callAPIwithFilter(filter) {
       $(".ring").addClass("d-none")
    })
 }
+
