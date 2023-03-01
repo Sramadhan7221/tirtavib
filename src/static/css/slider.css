@@ -123,15 +123,15 @@ body{
 
 .danger{
   background: rgb(167,9,49);
-background: linear-gradient(152deg, rgba(167,9,49,0.8911939775910365) 0%, rgba(176,4,53,1) 87%, rgba(159,2,34,1) 87%);
+background: linear-gradient(152deg, rgba(167, 9, 49, 0.75) 0%, rgba(176, 4, 53, 0.75) 87%, rgba(159,2,34,0.75) 87%);
 }
 .warning{
   background: rgb(227,224,0);
-  background: linear-gradient(152deg, rgba(227,224,0,0.8911939775910365) 0%, rgba(222,223,0,1) 87%, rgba(197,198,0,1) 87%);
+  background: linear-gradient(152deg, rgba(227, 223, 0, 0.75) 0%, rgba(222,223,0,0.75) 87%, rgba(197,198,0,0.75) 87%);
 }
 .success{
   background: rgb(0,198,3);
-  background: linear-gradient(152deg, rgba(0,198,3,0.8911939775910365) 0%, rgba(6,184,2,1) 87%, rgba(8,221,0,1) 87%);
+  background: linear-gradient(152deg, rgba(0, 198, 3, 0.75) 0%, rgba(6,184,2,0.75) 87%, rgba(8,221,0,0.75) 87%);
 }
 .primary{
   color: azure;
