@@ -17,29 +17,25 @@ $(document).ready(function () {
     });
   }, 2000);
 
-  let toggleSlide = false;
+  let toggleSlide = false,
+    slide,
+    currentIndex = 0;
   $(".toggle").click(function (e) {
     e.preventDefault();
     $(this).toggleClass("toggle-on");
+    toggleSlide = !toggleSlide;
 
     const totalButton = document.querySelectorAll(".radioIndicator");
     const totalSlide = document.querySelectorAll(".carousel-item");
 
-    let currentIndex = 0;
-    toggleSlide = !toggleSlide;
-
-    // Menambahkan event listener click pada setiap elemen totalButton
     totalButton.forEach((element, index) => {
       element.addEventListener("click", () => {
-        // Menggunakan index untuk menunjukkan elemen yang diklik
         currentIndex = index;
 
-        // Menghentikan interval slide jika ada
-        if (toggleSlide === false) {
+        if (!toggleSlide) {
           clearInterval(slide);
         }
 
-        // Memperbarui tampilan sesuai dengan elemen yang diklik
         $("#area_name").html(areaName[currentIndex]);
 
         totalButton.forEach((el) => {
@@ -51,15 +47,16 @@ $(document).ready(function () {
 
         totalButton[currentIndex].classList.add("active");
         totalSlide[currentIndex].classList.add("active");
-
-
       });
     });
 
-    let slide;
-
+    if (!toggleSlide) {
+      clearInterval(slide);
+    } else {
+      slideStart();
+    }
     // Perform Slide
-    function slideStart(currentIndex) {
+    function slideStart() {
       slide = setInterval(() => {
         $("#area_name").html(areaName[currentIndex]);
 
@@ -75,12 +72,6 @@ $(document).ready(function () {
 
         currentIndex = (currentIndex + 1) % totalButton.length;
       }, 5000);
-    }
-
-    if (toggleSlide === false) {
-      clearInterval(slide);
-    } else {
-      slideStart(currentIndex);
     }
   });
 
